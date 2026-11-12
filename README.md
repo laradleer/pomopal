@@ -35,18 +35,35 @@ Both ports are bound to `127.0.0.1`, so nothing is exposed to the internet. On t
 
 ## Scripts
 
-| Script               | What it does                                |
-| -------------------- | ------------------------------------------- |
-| `npm run dev`        | Start the dev server with hot reload        |
-| `npm run build`      | Production build into `.output/`            |
-| `npm run preview`    | Run the production build locally            |
-| `npm run lint`       | ESLint + Prettier check (CI runs this)      |
-| `npm run lint:fix`   | Fix lint errors and format every file       |
-| `npm run typecheck`  | Type-check the whole project with `vue-tsc` |
-| `npm test`           | Run the unit tests once (Vitest)            |
-| `npm run test:watch` | Run the unit tests in watch mode            |
+| Script                | What it does                                |
+| --------------------- | ------------------------------------------- |
+| `npm run dev`         | Start the dev server with hot reload        |
+| `npm run build`       | Production build into `.output/`            |
+| `npm run preview`     | Run the production build locally            |
+| `npm run lint`        | ESLint + Prettier check (CI runs this)      |
+| `npm run lint:fix`    | Fix lint errors and format every file       |
+| `npm run typecheck`   | Type-check the whole project with `vue-tsc` |
+| `npm test`            | Run the unit tests once (Vitest)            |
+| `npm run test:watch`  | Run the unit tests in watch mode            |
+| `npm run db:generate` | Create a migration from schema changes      |
+| `npm run db:migrate`  | Apply pending migrations                    |
+| `npm run db:seed`     | Sync the shop items                         |
+| `npm run db:studio`   | Browse the database in Drizzle Studio       |
 
 All four checks (`lint`, `typecheck`, `test`, `build`) must pass before a pull request is merged.
+
+## Database
+
+The schema lives in `server/db/schema.ts` (Drizzle, PostgreSQL). **The app applies pending migrations and syncs the shop items by itself on every start**, locally and in Docker, so you normally never run them by hand.
+
+To change the schema:
+
+1. Edit `server/db/schema.ts`.
+2. `npm run db:generate -- --name short-description` writes a new SQL file to `server/db/migrations/`.
+3. Read the SQL, then commit it together with the schema change.
+4. Restart `npm run dev`. The migration is applied on start.
+
+Never edit a migration that is already on `main`; add a new one instead. Shop items are defined in `server/db/shop-items.ts`.
 
 ## Project structure
 

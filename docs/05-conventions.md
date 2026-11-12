@@ -24,6 +24,8 @@ Rules marked 🔒 are enforced by ESLint (`npm run lint`), so CI fails if you br
 | A request/response shape             | `shared/schemas/<domain>.ts` (zod)      | `shared/schemas/pet.ts`             |
 | A type used on both sides            | `shared/types/<domain>.ts`              | `shared/types/shop.ts`              |
 | An error code                        | `shared/errors.ts`                      | `NOT_ENOUGH_COINS`                  |
+| A constant or list used on both sides | `shared/constants.ts`                  | `PET_SPECIES`, `TIMER_LIMITS`       |
+| A table or column                    | `server/db/schema.ts`, then `npm run db:generate` | `shop_item.price`        |
 | A page                               | `app/pages/<route>.vue`                 | `app/pages/shop.vue`                |
 | A base building block                | `app/components/ui/<Name>.vue`          | `ui/Button.vue` → `<UiButton>`      |
 | A feature component                  | `app/components/<feature>/<Name>.vue`   | `timer/Ring.vue` → `<TimerRing>`    |
@@ -132,7 +134,11 @@ throw apiError('NOT_ENOUGH_COINS')
 ### Database
 
 - Tables and columns are `snake_case` in Postgres and `camelCase` in TypeScript. Drizzle maps them (`casing: 'snake_case'`).
-- Get types from the schema (`typeof shopItem.$inferSelect`) instead of writing them by hand.
+- Get types from the schema (`typeof shopItem.$inferSelect`, or the exported `ShopItem`, `Profile` …) instead of writing them by hand.
+- Enum values and limits come from `shared/constants.ts`, so the database, zod schemas and UI always agree.
+- Rules that protect money and fairness are also database constraints: coins and XP can't go below zero, one running session per user, each item owned once. The service checks first to give a friendly error; the constraint is the safety net.
+- Services that may run inside a transaction take a `DbOrTx` parameter (`server/db/client.ts`).
+- Files in `server/db` use **relative imports** (`../../shared/constants`), not `~~` or `#shared`: drizzle-kit and the db CLI load them outside Nuxt.
 - Never edit a migration that is already on `main`. Change the schema and generate a new one.
 - Seeds are idempotent: running them twice changes nothing.
 
