@@ -33,7 +33,7 @@ const colorGroups = [
   { name: 'XP · level', tokens: ['grape', 'grape-edge', 'grape-tint'] },
   { name: 'Long break · info', tokens: ['sky', 'sky-tint'] },
   { name: 'Coins · streak', tokens: ['sun', 'sun-edge', 'sun-ink', 'sun-tint', 'on-sun'] },
-  { name: 'Other', tokens: ['berry', 'on-brand', 'focus-ring'] },
+  { name: 'Other', tokens: ['berry', 'on-brand', 'focus-ring', 'scrim'] },
 ] as const
 
 // Brand colours with the text colour that must be used on them.
@@ -172,5 +172,7 @@ const radii = [
         </div>
       </div>
     </section>
+
+    <DevComponentGallery />
   </main>
 </template>
