@@ -50,7 +50,11 @@ docs/               plan, backlog, architecture, design system
 
 ## Documentation
 
+> **Before your first pull request, read the [coding conventions](docs/05-conventions.md).**
+> Most of them are enforced by `npm run lint`.
+
 - [Development plan](docs/01-development-plan.md)
 - [GitHub setup and backlog](docs/02-github-setup-and-backlog.md)
 - [Architecture](docs/03-architecture.md)
 - [Design system](docs/04-design-system.md)
+- [Coding conventions](docs/05-conventions.md)
