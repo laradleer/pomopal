@@ -15,6 +15,11 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // The app starts at /home; the auth middleware sends signed-out users on to /login.
+  routeRules: {
+    '/': { redirect: '/home' },
+  },
+
   // Rubik (display) and Nunito (body) from Google Fonts, downloaded at build time and
   // served from our own domain. latin-ext covers Turkish and other accented letters.
   fonts: {

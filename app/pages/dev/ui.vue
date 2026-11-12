@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Living style guide for the design tokens. Only available in development.
 definePageMeta({
+  auth: false,
   middleware: () => {
     if (!import.meta.dev) {
       return abortNavigation(createError({ statusCode: 404, statusMessage: 'Page not found' }))
