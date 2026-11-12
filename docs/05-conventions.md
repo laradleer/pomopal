@@ -32,6 +32,7 @@ Rules marked 🔒 are enforced by ESLint (`npm run lint`), so CI fails if you br
 | Data loading + actions for a feature | `app/composables/use<Feature>.ts`       | `useShop()`                         |
 | State shared by many pages           | `app/stores/<domain>.ts` (Pinia)        | `profile`, `pet`, `timer`           |
 | A unit test                          | next to the file, `<name>.test.ts`      | `rules/session.test.ts`             |
+| Pure browser logic worth testing (a state machine, a calculation) | `shared/<name>.ts`, used by the store | `shared/timer.ts` |
 
 Nuxt names components after their folder, so don't repeat it in the file name: `components/timer/Ring.vue`, not `components/timer/TimerRing.vue`.
 
