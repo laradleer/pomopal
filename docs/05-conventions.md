@@ -229,7 +229,8 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - 🔒 `<script setup lang="ts">` only, in the order `script → template → style`.
 - 🔒 Typed `defineProps<…>()` and `defineEmits<…>()`. Use `defineModel()` for `v-model`.
 - 🔒 Components are written in PascalCase in templates: `<UiButton>`, not `<ui-button>`.
-- Build screens from `Ui*` components first. If a `Ui*` component is missing something, extend it there instead of styling around it.
+- Build screens from `Ui*` components first. If a `Ui*` component is missing something, extend it there instead of styling around it. All of them are shown on `/dev/ui`.
+- Confirmations use `<UiSheet>`, short messages use `useToast().show()`, icons use `<UiIcon name="…">` (Lucide names). Never `alert()`, `confirm()` or a raw `<svg>` icon.
 - Components get data through props and report changes through events. Only feature components may read a store.
 - Every interactive element is reachable by keyboard and shows the focus ring.
 
@@ -241,6 +242,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - 🔒 No arbitrary colours (`bg-[#c93a24]`, `text-[rgb(…)]`) and no static `style="…"`. Dynamic values (`:style="{ '--progress': p }"`) are fine.
 - `<style scoped>` only for what Tailwind can't express: keyframes, SVG details, complex animations. Colours inside it use `var(--token)`.
 - Mobile-first: the base classes are for the phone, `md:` and up for desktop.
+- Anything that should feel pressable gets `pressable edge-<token>` (for example `pressable edge-tomato-edge`): the 4px edge that sinks on press. `UiButton` already does this.
 - Class order is sorted by Prettier automatically. Don't fight it.
 - Motion respects `prefers-reduced-motion` (`motion-safe:` / `motion-reduce:`).
 
