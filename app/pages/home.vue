@@ -15,7 +15,10 @@ const pet = usePetStore()
     <!-- Bento: one column on phones, two from md: up. -->
     <div class="grid gap-6 md:grid-cols-2">
       <TimerPanel />
-      <AppComingSoon icon="list-checks" message="Today's tasks will show up here." />
+      <div class="space-y-6">
+        <RewardLevelCard />
+        <AppComingSoon icon="list-checks" message="Today's tasks will show up here." />
+      </div>
     </div>
   </div>
 </template>

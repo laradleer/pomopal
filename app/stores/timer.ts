@@ -23,13 +23,14 @@ export const useTimerStore = defineStore('timer', () => {
   const pet = usePetStore()
   const user = useUserStore()
   const toast = useToast()
+  const rewardFeedback = useRewardFeedback()
 
   const durations = computed(() => profile.timerMinutes)
   const state = ref<TimerState>(initialTimerState(durations.value))
   const now = ref(Date.now())
   /** Last result of a focus session, for the pet's mood (#20). */
   const lastResult = ref<'completed' | 'abandoned' | null>(null)
-  /** Rewards from the last completed session, for the reward toast (#19). */
+  /** Rewards from the last completed session. */
   const lastRewards = ref<CompleteSessionResult['rewards'] | null>(null)
 
   /** Resolves to the server id of the running focus session (null if saving failed). */
@@ -118,10 +119,7 @@ export const useTimerStore = defineStore('timer', () => {
     send({ type: 'timeUp' })
     if (finished === 'focusing') {
       lastResult.value = 'completed'
-      toast.show(`Nice work! ${pet.name} is proud of you. Time for a break.`, {
-        tone: 'success',
-        icon: 'sparkles',
-      })
+      // The reward toast follows once the server has paid out (saveEnd).
       void saveEnd('complete')
     } else {
       toast.show('Break is over. Ready for another round?', { icon: 'timer' })
@@ -146,7 +144,13 @@ export const useTimerStore = defineStore('timer', () => {
   async function saveEnd(action: 'complete' | 'abandon') {
     const id = await savedSession
     savedSession = null
-    if (id === null) return
+    if (id === null) {
+      // The start was never saved, so there is nothing to pay out. Still say well done.
+      if (action === 'complete') {
+        toast.show(`Nice work! ${pet.name} is proud of you.`, { tone: 'success' })
+      }
+      return
+    }
     try {
       if (action === 'complete') {
         const result = await $fetch<CompleteSessionResult>(`/api/sessions/${id}/complete`, {
@@ -155,11 +159,14 @@ export const useTimerStore = defineStore('timer', () => {
           body: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
         })
         lastRewards.value = result.rewards
+        // Refresh first, so the chips and XP bar move together with the reward toast.
+        await user.refresh()
+        rewardFeedback.celebrate(result.rewards)
       } else {
         await $fetch<FocusSessionDto>(`/api/sessions/${id}/abandon`, { method: 'POST' })
+        // The pet's mood changed on the server.
+        await user.refresh()
       }
-      // Profile (XP, coins, streak) and pet mood changed on the server.
-      await user.refresh()
     } catch (error) {
       toast.show(apiErrorMessage(error), { tone: 'error' })
     }

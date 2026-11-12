@@ -249,6 +249,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - 🔒 Components are written in PascalCase in templates: `<UiButton>`, not `<ui-button>`.
 - Build screens from `Ui*` components first. If a `Ui*` component is missing something, extend it there instead of styling around it. All of them are shown on `/dev/ui`.
 - Confirmations use `<UiSheet>`, short messages use `useToast().show()`, icons use `<UiIcon name="…">` (Lucide names). Never `alert()`, `confirm()` or a raw `<svg>` icon.
+- Rewards from the server (XP, coins, level-ups) are shown with `useRewardFeedback().celebrate(rewards)`: the reward toast and the level-up screen. Refresh the user store first, so the chips and XP bar move at the same time.
 - Components get data through props and report changes through events. Only feature components may read a store.
 - Every interactive element is reachable by keyboard and shows the focus ring.
 

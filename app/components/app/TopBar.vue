@@ -10,14 +10,14 @@ defineSlots<{ stats?(): unknown }>()
         <span class="grid size-8 place-items-center rounded-md bg-tomato text-on-brand">
           <UiIcon name="timer" :size="20" />
         </span>
-        PomoPal
+        <span class="hidden sm:inline">PomoPal</span>
       </NuxtLink>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1 sm:gap-2">
         <slot name="stats" />
         <NuxtLink
           to="/settings"
-          class="grid size-10 place-items-center rounded-pill text-ink-muted hover:bg-surface-sunken hover:text-ink"
+          class="grid size-9 place-items-center rounded-pill text-ink-muted hover:bg-surface-sunken hover:text-ink sm:size-10"
         >
           <UiIcon name="settings" :size="20" label="Settings" />
         </NuxtLink>
