@@ -1,5 +1,5 @@
-import { createDb } from '../db/client'
-import type { Database } from '../db/client'
+import { createDb } from '~~/server/db/client'
+import type { Database } from '~~/server/db/client'
 
 let db: Database | undefined
 

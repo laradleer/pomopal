@@ -11,6 +11,7 @@ import type { ApiErrorData, ErrorCode } from '#shared/errors'
 export function apiError(code: ErrorCode, message: string = code) {
   return createError<ApiErrorData>({
     statusCode: errorStatus[code],
+    statusMessage: code,
     message,
     data: { code },
   })
