@@ -1,5 +1,7 @@
 # PomoPal
 
+[![CI](https://github.com/laradleer/pomopal/actions/workflows/ci.yml/badge.svg)](https://github.com/laradleer/pomopal/actions/workflows/ci.yml)
+
 Study with a pet. A Pomodoro web app where every finished focus session earns XP and coins, and coins buy accessories for your cat or dog.
 
 Built with Nuxt 4, TypeScript, Tailwind CSS v4, Pinia, Better Auth, PostgreSQL and Drizzle.
@@ -64,6 +66,47 @@ To change the schema:
 4. Restart `npm run dev`. The migration is applied on start.
 
 Never edit a migration that is already on `main`; add a new one instead. Shop items are defined in `server/db/shop-items.ts`.
+
+## CI and deploy
+
+**CI** (`.github/workflows/ci.yml`) runs on every pull request and every push to `main`, with three jobs in parallel:
+
+| Job                          | Checks                                                                       |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| Lint, typecheck, test, build | the four `npm` checks                                                        |
+| Migrations                   | schema and migrations are in sync; migrate and seed run twice on Postgres 18 |
+| Docker image                 | the production image builds                                                  |
+
+**Deploy** (`.github/workflows/deploy.yml`) runs after CI passes on `main`, for that exact commit. It connects to the VPS over SSH, checks out the commit and runs `docker compose up -d --build --wait`, which returns only when the app is healthy and migrations have run. You can also start it by hand under **Actions → Deploy → Run workflow**.
+
+### One-time VPS setup
+
+1. Install Docker Engine with the Compose plugin, and add the deploy user to the `docker` group.
+2. Clone the repo and create the env file:
+   ```bash
+   git clone https://github.com/laradleer/pomopal.git ~/pomopal
+   cd ~/pomopal && cp .env.example .env   # strong POSTGRES_PASSWORD and BETTER_AUTH_SECRET, BETTER_AUTH_URL=https://your-domain
+   ```
+3. Create a key pair just for deploys, and allow it on the VPS:
+   ```bash
+   ssh-keygen -t ed25519 -f pomopal-deploy -N "" -C "pomopal deploy"
+   cat pomopal-deploy.pub >> ~/.ssh/authorized_keys   # on the VPS, as the deploy user
+   ```
+4. In GitHub, under **Settings → Secrets and variables → Actions**:
+
+   | Kind     | Name              | Value                                                               |
+   | -------- | ----------------- | ------------------------------------------------------------------- |
+   | Secret   | `VPS_HOST`        | server IP or hostname                                               |
+   | Secret   | `VPS_USER`        | deploy user                                                         |
+   | Secret   | `VPS_SSH_KEY`     | contents of the private key `pomopal-deploy`                        |
+   | Secret   | `VPS_PORT`        | _optional_, SSH port if not 22                                      |
+   | Secret   | `VPS_FINGERPRINT` | _optional_, host key fingerprint (`ssh-keyscan` + `ssh-keygen -lf`) |
+   | Variable | `APP_DIR`         | _optional_, clone path relative to home (default `pomopal`)         |
+   | Variable | `DEPLOY_ENABLED`  | `true`, which turns deploys on                                      |
+
+5. Nginx and HTTPS in front of port 3000: see #8.
+
+Until `DEPLOY_ENABLED` is `true`, the deploy workflow is skipped, so merging to `main` is safe before the VPS is ready.
 
 ## Project structure
 
