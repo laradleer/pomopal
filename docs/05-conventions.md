@@ -152,6 +152,17 @@ throw apiError('NOT_ENOUGH_COINS')
 
 A page sets its meta, calls composables or stores, and arranges components. No business logic, no direct fetching.
 
+**Who may open a page** is declared once, with `definePageMeta({ auth })`, and enforced by `app/middleware/auth.global.ts` (on the server for the first request, so nothing flashes):
+
+| `auth`         | Who can open it                    | Others go to                 |
+| -------------- | ---------------------------------- | ---------------------------- |
+| _(not set)_    | signed in, with a pet              | `/login` or `/onboarding`    |
+| `'onboarding'` | signed in, without a pet yet       | `/login` or `/home`          |
+| `'guest'`      | signed out (login, sign-up)        | `/home` or `/onboarding`     |
+| `false`        | anyone                             | —                            |
+
+The signed-in user, profile and pet live in `useUserStore()` (from `GET /api/me`). Call `refresh()` after something changes them.
+
 ```vue
 <!-- app/pages/shop.vue -->
 <script setup lang="ts">
