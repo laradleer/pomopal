@@ -4,6 +4,7 @@ import type { CompleteSessionResult, FocusSessionDto } from '#shared/types/sessi
 import type { Transaction } from '~~/server/db/client'
 import { focusSession, pet, profile, task } from '~~/server/db/schema'
 import type { FocusSession } from '~~/server/db/schema'
+import { applyRewards } from '~~/server/services/rules/rewards'
 import { isSessionValid } from '~~/server/services/rules/session'
 
 export function toSessionDto(row: FocusSession): FocusSessionDto {
@@ -71,8 +72,10 @@ async function lockRunningSession(tx: Transaction, userId: string, id: number) {
 }
 
 /**
- * Completes a running session if enough real time has passed (`isSessionValid`).
- * Rewards are zero for now; XP, coins and levels are added in #17.
+ * Completes a running session if enough real time has passed (`isSessionValid`) and pays out:
+ * XP, coins and level-ups go to the profile, the earnings are stored on the session, and a
+ * completed focus session makes the pet happy. All in one transaction, with the session and
+ * profile rows locked, so a session can never be paid twice.
  */
 export async function completeSession(
   userId: string,
@@ -85,21 +88,41 @@ export async function completeSession(
       throw apiError('SESSION_TOO_SHORT')
     }
 
+    const [current] = await tx
+      .select({ xp: profile.xp, level: profile.level, coins: profile.coins })
+      .from(profile)
+      .where(eq(profile.userId, userId))
+      .for('update')
+    if (!current) throw apiError('NOT_FOUND', 'Profile not found')
+
+    const reward = applyRewards(current, running.mode, running.plannedMin)
+
     const [completed] = await tx
       .update(focusSession)
-      .set({ status: 'completed', endedAt: now })
+      .set({
+        status: 'completed',
+        endedAt: now,
+        xpEarned: reward.earned.xp,
+        coinsEarned: reward.earned.coins,
+      })
       .where(eq(focusSession.id, id))
       .returning()
     if (!completed) throw new Error('Session update returned no row')
 
-    const current = await tx.query.profile.findFirst({
-      where: eq(profile.userId, userId),
-      columns: { level: true },
-    })
+    await tx.update(profile).set(reward.progress).where(eq(profile.userId, userId))
+
+    if (running.mode === 'focus') {
+      await tx.update(pet).set({ mood: 'happy' }).where(eq(pet.userId, userId))
+    }
 
     return {
       session: toSessionDto(completed),
-      rewards: { xp: 0, coins: 0, levelUp: false, newLevel: current?.level ?? 1 },
+      rewards: {
+        xp: reward.earned.xp,
+        coins: reward.earned.coins,
+        levelUp: reward.levelsGained > 0,
+        newLevel: reward.progress.level,
+      },
     }
   })
 }
