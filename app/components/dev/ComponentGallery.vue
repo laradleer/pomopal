@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { PET_MOODS, PET_SPECIES } from '#shared/constants'
+
 // Every Ui* component in every state, for /dev/ui. Dev only.
 const toast = useToast()
 
@@ -42,6 +44,23 @@ const icons = [
 <template>
   <section class="space-y-8">
     <h2 class="text-title">Components</h2>
+
+    <div class="space-y-3">
+      <h3 class="text-label text-ink-muted">PetView · every species and mood</h3>
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <template v-for="species in PET_SPECIES" :key="species">
+          <figure
+            v-for="mood in PET_MOODS"
+            :key="`${species}-${mood}`"
+            class="flex flex-col items-center gap-2 rounded-lg bg-canvas-warm p-4"
+          >
+            <PetView :species="species" :mood="mood" :size="120" />
+            <figcaption class="text-body-sm text-ink-muted">{{ species }} · {{ mood }}</figcaption>
+          </figure>
+        </template>
+      </div>
+      <PetGreeting species="cat" mood="happy" message="That was great! Ready for another round?" />
+    </div>
 
     <div class="space-y-3">
       <h3 class="text-label text-ink-muted">UiButton</h3>

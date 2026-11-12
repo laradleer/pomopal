@@ -4,15 +4,15 @@ import type { PetSpecies } from '#shared/constants'
 
 /**
  * Cat or dog, as two big pressable tiles. Real radio inputs underneath, so arrow keys,
- * Space and screen readers work as expected. Placeholder art until the real pet (#20).
+ * Space and screen readers work as expected.
  */
 const model = defineModel<PetSpecies | undefined>()
 
 const props = withDefaults(defineProps<{ error?: string }>(), { error: undefined })
 
-const options: Record<PetSpecies, { label: string; icon: string; blurb: string }> = {
-  cat: { label: 'Cat', icon: 'cat', blurb: 'Calm and curious' },
-  dog: { label: 'Dog', icon: 'dog', blurb: 'Loyal and cheerful' },
+const options: Record<PetSpecies, { label: string; blurb: string }> = {
+  cat: { label: 'Cat', blurb: 'Calm and curious' },
+  dog: { label: 'Dog', blurb: 'Loyal and cheerful' },
 }
 
 const errorId = useId()
@@ -29,9 +29,12 @@ const errorId = useId()
         :class="props.error ? 'border-berry' : 'border-border-strong'"
       >
         <input v-model="model" type="radio" name="species" :value="species" class="sr-only" />
-        <span class="grid size-16 place-items-center rounded-pill bg-sun-tint text-sun-ink">
-          <UiIcon :name="options[species].icon" :size="24" />
-        </span>
+        <PetView
+          :species="species"
+          :mood="model === species ? 'happy' : 'neutral'"
+          :size="88"
+          aria-hidden="true"
+        />
         <span class="text-heading">{{ options[species].label }}</span>
         <span class="text-body-sm text-ink-muted">{{ options[species].blurb }}</span>
       </label>

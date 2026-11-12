@@ -262,6 +262,8 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - `<style scoped>` only for what Tailwind can't express: keyframes, SVG details, complex animations. Colours inside it use `var(--token)`.
 - Mobile-first: the base classes are for the phone, `md:` and up for desktop.
 - Anything that should feel pressable gets `pressable edge-<token>` (for example `pressable edge-tomato-edge`): the 4px edge that sinks on press. `UiButton` already does this.
+- Illustrations (the pet, accessories) use the `pet-*` tokens, which stay the same in dark mode. Accessories go in `<PetView>`'s named slots (`background`, `neck`, `head`, `face`), drawn around (0, 0), so one drawing fits both the cat and the dog. Check new art on `/dev/ui`.
+- The pet's mood and line come from `usePetMood()` (`app/utils/pet-lines.ts` holds the lines); don't pick a mood in a page.
 - Class order is sorted by Prettier automatically. Don't fight it.
 - Motion respects `prefers-reduced-motion` (`motion-safe:` / `motion-reduce:`).
 

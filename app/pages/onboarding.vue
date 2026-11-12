@@ -20,7 +20,11 @@ const nameLabel = computed(() =>
 
 <template>
   <div>
-    <AuthGreeting :message="`Hi ${firstName}! Who would you like to study with?`" />
+    <PetGreeting
+      :species="values.species ?? 'cat'"
+      mood="happy"
+      :message="`Hi ${firstName}! Who would you like to study with?`"
+    />
 
     <h1 class="mt-8 text-title">Choose your study buddy</h1>
 
