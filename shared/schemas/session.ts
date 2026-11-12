@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { MODE_LIMITS, SESSION_MODES } from '../constants'
+import { isValidTimeZone } from '../streak'
 
 /** POST /api/sessions: start a focus session or a break. */
 export const sessionStartSchema = z
@@ -25,3 +26,8 @@ export const sessionIdParamsSchema = z.object({
 })
 
 export type SessionStartInput = z.infer<typeof sessionStartSchema>
+
+/** POST /api/sessions/:id/complete. The browser's time zone decides which day counts for the streak. */
+export const sessionCompleteSchema = z.object({
+  timeZone: z.string().max(64).refine(isValidTimeZone, { error: 'Unknown time zone.' }).optional(),
+})

@@ -151,6 +151,8 @@ export const useTimerStore = defineStore('timer', () => {
       if (action === 'complete') {
         const result = await $fetch<CompleteSessionResult>(`/api/sessions/${id}/complete`, {
           method: 'POST',
+          // The streak counts calendar days in the user's own time zone.
+          body: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
         })
         lastRewards.value = result.rewards
       } else {
