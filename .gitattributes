@@ -1,0 +1,9 @@
+# Same line endings for everyone, whatever the OS.
+* text=auto eol=lf
+
+*.ico binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.glb binary
+*.woff2 binary
