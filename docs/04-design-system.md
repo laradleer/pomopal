@@ -57,6 +57,7 @@ The one rule: **calm canvas, loud rewards.**
 | `sun-edge` | `#d99a00` | `#d99a00` | Coin rim |
 | `sun-ink` | `#7a5a00` | `#ffd76b` | Coin amounts as text |
 | `sun-tint` | `#fff4d6` | `#33290f` | Coin chip, price tags |
+| `on-sun` | `#16130f` | `#16130f` | Text on sun (always dark) |
 | `berry` | `#c2185b` | `#ff6b9a` | Errors, destructive actions |
 | `on-brand` | `#ffffff` | `#16130f` | Text on tomato, leaf, grape, sky |
 | `focus-ring` | `#1c6cc8` | `#5fa8ff` | Keyboard focus outline |

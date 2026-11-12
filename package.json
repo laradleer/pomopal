@@ -19,6 +19,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@nuxt/fonts": "^1.2.0",
     "@pinia/nuxt": "^1.0.3",
     "@tailwindcss/vite": "^4.3.5",
     "nuxt": "^4.6.4",
