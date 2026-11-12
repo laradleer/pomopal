@@ -19,6 +19,8 @@ ENV NODE_ENV=production \
     PORT=3000
 WORKDIR /app
 COPY --from=build --chown=node:node /app/.output ./.output
+# Migrations are applied by the app on start (server/plugins/database.ts).
+COPY --from=build --chown=node:node /app/server/db/migrations ./server/db/migrations
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=10s --timeout=3s --start-period=15s --retries=3 \
