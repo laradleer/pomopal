@@ -204,6 +204,8 @@ export async function useShop() {
 
 Use Pinia **only** for state that several pages need and that must survive navigation: `profile` (XP, level, coins, streak), `pet` (species, mood, equipped items), `timer` (mode, phase, end time).
 
+`user` holds the `GET /api/me` response and is the **single source of truth**. `profile` and `pet` are read-only views on it (`computed`), so they can never disagree. After the server changes something, call `useUserStore().refresh()` instead of patching copies.
+
 ```ts
 // app/stores/profile.ts
 export const useProfileStore = defineStore('profile', () => {
