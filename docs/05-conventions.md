@@ -196,7 +196,8 @@ export async function useShop() {
 
 - One composable per feature: `useShop`, `useTasks`, `useStats`, `useSessions`.
 - It returns refs and functions, never raw promises for the template to unwrap.
-- Errors: catch only where you can show something useful, using `getErrorCode` → pet bubble or toast.
+- Errors: catch only where you can show something useful. `apiErrorMessage(error)` (`app/utils/error-messages.ts`) turns an API error into the friendly text; every error code needs a message there.
+- **Forms** use `useZodForm(schema, initialValues)` with the same zod schema as the API. Its `submit(action)` shows field errors, and any error the action throws becomes `formError` (show it with `<UiAlert>`).
 
 ### Stores: shared state only
 
@@ -263,6 +264,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - 🔒 Type-only imports use `import type`.
 - Get types from zod (`z.infer<typeof schema>`) and Drizzle (`$inferSelect`) instead of hand-writing duplicates.
 - Prefer named exports. The only default exports are the ones Nuxt requires (handlers, pages, config).
+- Auto-imported names must be unique across `app/` and `server/`: typecheck sees both. The server has `useAuth()` (Better Auth), so the browser composable is `useAuthActions()`.
 - No commented-out code and no `console.log` in a PR (🔒 warned). Delete it; Git remembers.
 
 ## Naming
