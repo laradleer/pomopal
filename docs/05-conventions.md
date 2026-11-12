@@ -57,14 +57,15 @@ import { buyItem } from '~~/server/services/shop'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUser(event)
-  const { itemId } = await getValidatedRouterParams(event, buyItemParams.parse)
+  const { itemId } = getValidParams(event, buyItemParams)
   return buyItem(user.id, itemId)
 })
 ```
 
 - 🔒 No `drizzle-orm` imports and no `useDb()` in `server/api`.
 - File names follow Nuxt: `index.get.ts`, `index.post.ts`, `[id].patch.ts`, `[id]/complete.post.ts`.
-- Validate **every** input (body, query, params) with a zod schema from `shared/schemas` via `readValidatedBody`, `getValidatedQuery` or `getValidatedRouterParams`.
+- Validate **every** input (body, query, params) with a zod schema from `shared/schemas` via `readValidBody`, `getValidQuery` or `getValidParams` (`server/utils/validation.ts`). They answer `VALIDATION_FAILED` with the schema's friendly message. Don't use h3's `readValidatedBody` directly: its errors have no code.
+- Creating a row that may exist only once? Use one atomic `insert … onConflictDoNothing().returning()` and throw the conflict code when nothing came back (see `createPet`), instead of "check, then insert".
 - **Auth:** `requireUser(event)` for routes that need a user, `getAuthSession(event)` when signed-out is allowed. Both look the session up once per request. Never read the auth cookie yourself.
 - **Imports** use aliases: `~~/server/…` for server code, `#shared/…` for shared code. The only exception is `server/db` (see Database).
 
