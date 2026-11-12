@@ -4,6 +4,11 @@ import type { H3Event } from 'h3'
 import { account, session, user, verification } from '~~/server/db/schema'
 import { createProfile } from '~~/server/services/profile'
 
+/** Google sign-in is on only when both keys are set. */
+export function isGoogleEnabled(): boolean {
+  return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)
+}
+
 function createAuth() {
   const db = useDb()
   const googleClientId = process.env.GOOGLE_CLIENT_ID
