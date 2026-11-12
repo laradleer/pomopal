@@ -1,0 +1,12 @@
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+coverage
+node_modules
+package-lock.json
+public
+server/db/migrations
+docs
