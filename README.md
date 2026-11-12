@@ -13,6 +13,26 @@ npm ci          # install exact versions from package-lock.json
 npm run dev     # http://localhost:3000
 ```
 
+## Run with Docker
+
+Requirements: Docker with Compose v2.
+
+```bash
+cp .env.example .env            # then set POSTGRES_PASSWORD and BETTER_AUTH_SECRET
+docker compose up -d --build    # app on http://localhost:3000, Postgres on localhost:5432
+docker compose logs -f app      # follow the app logs
+docker compose down             # stop (data stays in the pgdata volume)
+```
+
+For day-to-day coding, run only the database in Docker and the app with hot reload:
+
+```bash
+docker compose up -d db
+npm run dev
+```
+
+Both ports are bound to `127.0.0.1`, so nothing is exposed to the internet. On the VPS, Nginx forwards the domain to port 3000. `GET /api/health` returns `{ "status": "ok" }` for health checks.
+
 ## Scripts
 
 | Script               | What it does                                |
