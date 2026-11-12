@@ -61,6 +61,7 @@ The one rule: **calm canvas, loud rewards.**
 | `berry` | `#c2185b` | `#ff6b9a` | Errors, destructive actions |
 | `on-brand` | `#ffffff` | `#16130f` | Text on tomato, leaf, grape, sky |
 | `focus-ring` | `#1c6cc8` | `#5fa8ff` | Keyboard focus outline |
+| `scrim` | `rgb(13 11 9 / 0.55)` | same | Dimmed background behind sheets |
 
 Every text colour passes a 4.5:1 contrast ratio in both themes.
 
