@@ -1,5 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import type { SessionStartInput } from '#shared/schemas/session'
+import { localDate, nextStreak } from '#shared/streak'
 import type { CompleteSessionResult, FocusSessionDto } from '#shared/types/session'
 import type { Transaction } from '~~/server/db/client'
 import { focusSession, pet, profile, task } from '~~/server/db/schema'
@@ -74,13 +75,15 @@ async function lockRunningSession(tx: Transaction, userId: string, id: number) {
 /**
  * Completes a running session if enough real time has passed (`isSessionValid`) and pays out:
  * XP, coins and level-ups go to the profile, the earnings are stored on the session, and a
- * completed focus session makes the pet happy. All in one transaction, with the session and
- * profile rows locked, so a session can never be paid twice.
+ * completed focus session makes the pet happy and counts for the streak (on the calendar day in
+ * `timeZone`). All in one transaction, with the session and profile rows locked, so a session
+ * can never be paid twice.
  */
 export async function completeSession(
   userId: string,
   id: number,
   now: Date,
+  timeZone: string,
 ): Promise<CompleteSessionResult> {
   return useDb().transaction(async (tx) => {
     const running = await lockRunningSession(tx, userId, id)
@@ -89,13 +92,21 @@ export async function completeSession(
     }
 
     const [current] = await tx
-      .select({ xp: profile.xp, level: profile.level, coins: profile.coins })
+      .select({
+        xp: profile.xp,
+        level: profile.level,
+        coins: profile.coins,
+        streakDays: profile.streakDays,
+        lastStudyDate: profile.lastStudyDate,
+      })
       .from(profile)
       .where(eq(profile.userId, userId))
       .for('update')
     if (!current) throw apiError('NOT_FOUND', 'Profile not found')
 
     const reward = applyRewards(current, running.mode, running.plannedMin)
+    const streak =
+      running.mode === 'focus' ? nextStreak(current, localDate(now, timeZone)) : current
 
     const [completed] = await tx
       .update(focusSession)
@@ -109,7 +120,14 @@ export async function completeSession(
       .returning()
     if (!completed) throw new Error('Session update returned no row')
 
-    await tx.update(profile).set(reward.progress).where(eq(profile.userId, userId))
+    await tx
+      .update(profile)
+      .set({
+        ...reward.progress,
+        streakDays: streak.streakDays,
+        lastStudyDate: streak.lastStudyDate,
+      })
+      .where(eq(profile.userId, userId))
 
     if (running.mode === 'focus') {
       await tx.update(pet).set({ mood: 'happy' }).where(eq(pet.userId, userId))

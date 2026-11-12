@@ -19,7 +19,8 @@ export async function readValidBody<Schema extends z.ZodType>(
   event: H3Event,
   schema: Schema,
 ): Promise<z.output<Schema>> {
-  return parseOrThrow(schema, await readBody(event))
+  // An empty body counts as {} so schemas with only optional fields accept it.
+  return parseOrThrow(schema, (await readBody(event)) ?? {})
 }
 
 export function getValidQuery<Schema extends z.ZodType>(
