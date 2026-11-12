@@ -27,3 +27,10 @@ export const TIMER_LIMITS = {
 
 export const PET_NAME_MAX_LENGTH = 20
 export const TASK_TITLE_MAX_LENGTH = 120
+
+/** The allowed length range for each session mode (session modes use short/long names). */
+export const MODE_LIMITS = {
+  focus: TIMER_LIMITS.focus,
+  short: TIMER_LIMITS.shortBreak,
+  long: TIMER_LIMITS.longBreak,
+} as const satisfies Record<SessionMode, { min: number; max: number; default: number }>

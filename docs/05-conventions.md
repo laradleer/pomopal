@@ -91,6 +91,8 @@ export async function buyItem(userId: string, itemId: number): Promise<BuyResult
 
 - Any write that changes **coins, XP, level, streak or inventory** runs inside `db.transaction`.
 - Coin changes are one atomic `UPDATE … SET coins = coins - price WHERE coins >= price`. Never read the balance, subtract in JS, then write it back.
+- When a request acts on a row's current state (complete a running session, equip an item), **lock the row** in the transaction with `.for('update')` first, like `lockRunningSession` in `server/services/sessions.ts`. Two identical requests at once then get one success and one 409.
+- Services take `now: Date` from the handler instead of calling `new Date()` themselves, and pass it on to the rules.
 - Every query filters by `userId`. A user can never read or change another user's rows. If the row isn't theirs, answer `NOT_FOUND`, not `FORBIDDEN`.
 - Return plain typed objects. Never return a whole user or auth row.
 
