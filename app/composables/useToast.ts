@@ -1,4 +1,4 @@
-export type ToastTone = 'info' | 'success' | 'error'
+export type ToastTone = 'info' | 'success' | 'error' | 'reward'
 
 export type Toast = {
   id: number

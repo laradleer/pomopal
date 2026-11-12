@@ -4,10 +4,15 @@
 -->
 <template>
   <div class="min-h-dvh bg-canvas">
-    <AppTopBar />
+    <AppTopBar>
+      <template #stats>
+        <AppStatChips />
+      </template>
+    </AppTopBar>
     <main class="mx-auto w-full max-w-phone px-4 pt-6 pb-32 md:max-w-app">
       <slot />
     </main>
     <AppTabBar />
+    <RewardLevelUp />
   </div>
 </template>
