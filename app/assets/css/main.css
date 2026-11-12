@@ -1,3 +1,219 @@
 @import 'tailwindcss';
 
-/* Design tokens (colours, radii, fonts, type styles) are added in #4. */
+/*
+ * PomoPal design tokens. Source of truth: docs/04-design-system.md
+ *
+ * This file is the ONLY place where raw colour values live. Everything else uses the
+ * token utilities (bg-tomato, text-ink-muted …) or var(--color-…).
+ *
+ * Each colour is defined once with light-dark(light, dark). Which value applies depends
+ * on `color-scheme`, which is set by the data-theme attribute on <html> (see bottom).
+ */
+
+/* Dark variant follows data-theme, not the OS setting. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* `static`: always output every token as a CSS variable, even if no utility uses it yet,
+   so var(--color-…) works in SVGs, keyframes and dynamic styles. */
+@theme static {
+  /* Switch off Tailwind's default palette, fonts, radii and shadows: tokens only. */
+  --color-*: initial;
+  --font-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --text-*: initial;
+
+  /* Surfaces */
+  --color-canvas: light-dark(#ffffff, #121110);
+  --color-canvas-warm: light-dark(#f4f2ef, #191715);
+  --color-surface: light-dark(#ffffff, #1e1c1a);
+  --color-surface-sunken: light-dark(#f7f5f2, #171513);
+  --color-border: light-dark(#e7e3de, #34302c);
+  --color-border-strong: light-dark(#d4cec7, #4a4540);
+
+  /* Ink */
+  --color-ink: light-dark(#16130f, #f5f1ec);
+  --color-ink-muted: light-dark(#6b655e, #a8a097);
+  --color-ink-button: light-dark(#2b2825, #f5f1ec);
+  --color-ink-button-edge: light-dark(#0d0b09, #bdb5ab);
+  --color-on-ink-button: light-dark(#ffffff, #16130f);
+
+  /* Brand, focus mode */
+  --color-tomato: light-dark(#c93a24, #ff7a5c);
+  --color-tomato-edge: light-dark(#8f2414, #c4472d);
+  --color-tomato-tint: light-dark(#fdebe7, #3a1f19);
+
+  /* Short break, success */
+  --color-leaf: light-dark(#267d18, #5fd04a);
+  --color-leaf-edge: light-dark(#174f0e, #3e9a2c);
+  --color-leaf-tint: light-dark(#e8f6e3, #1b2e17);
+
+  /* XP and level */
+  --color-grape: light-dark(#6d3ef0, #a98bff);
+  --color-grape-edge: light-dark(#4a22b8, #7a5bd6);
+  --color-grape-tint: light-dark(#efe9ff, #261d42);
+
+  /* Long break, info */
+  --color-sky: light-dark(#1c6cc8, #5fa8ff);
+  --color-sky-tint: light-dark(#e6f1fd, #16263d);
+
+  /* Coins and streak (text on sun is always dark) */
+  --color-sun: #ffc83d;
+  --color-sun-edge: #d99a00;
+  --color-sun-ink: light-dark(#7a5a00, #ffd76b);
+  --color-sun-tint: light-dark(#fff4d6, #33290f);
+  --color-on-sun: #16130f; /* text on sun stays dark in both themes */
+
+  /* Error, destructive */
+  --color-berry: light-dark(#c2185b, #ff6b9a);
+
+  /* Text on tomato, leaf, grape and sky */
+  --color-on-brand: light-dark(#ffffff, #16130f);
+
+  /* Keyboard focus outline */
+  --color-focus-ring: light-dark(#1c6cc8, #5fa8ff);
+
+  /* Fonts: Rubik for display, Nunito for body. Loaded by @nuxt/fonts. */
+  --font-display: 'Rubik', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --default-font-family: var(--font-body);
+
+  /* Borders are 1.5px everywhere, so a plain `border` class is already right. */
+  --default-border-width: 1.5px;
+
+  /* Radii */
+  --radius-sm: 10px; /* inputs, tags */
+  --radius-md: 16px; /* buttons, shop tiles */
+  --radius-lg: 24px; /* cards */
+  --radius-xl: 32px; /* bottom sheets, pet stage */
+  --radius-pill: 999px; /* chips, progress bars, tab bar */
+
+  /* Shadow: only for floating things (tab bar, toasts, speech bubble). Cards never get one. */
+  --shadow-float: 0 8px 24px rgb(22 19 15 / 0.1);
+
+  /* Layout widths: phone column and the 2-column desktop bento */
+  --container-phone: 30rem; /* 480px */
+  --container-app: 60rem; /* 960px */
+
+  /* Motion */
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-pop: pop 360ms var(--ease-pop);
+
+  @keyframes pop {
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+/*
+ * Spacing needs no tokens: Tailwind's default 4px scale already matches the design system
+ * (space-1 = p-1 = 4px, space-4 = p-4 = 16px, space-6 = p-6 = 24px, space-12 = p-12 = 48px).
+ */
+
+/* Type styles: one class sets font, size, line height and weight together. */
+@utility text-display-xl {
+  font-family: var(--font-display);
+  font-size: 2.75rem; /* 44px */
+  line-height: 3rem; /* 48px */
+  font-weight: 800;
+}
+@utility text-timer {
+  font-family: var(--font-display);
+  font-size: 4.5rem; /* 72px */
+  line-height: 4.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+@utility text-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem; /* 28px */
+  line-height: 2.125rem; /* 34px */
+  font-weight: 800;
+}
+@utility text-heading {
+  font-family: var(--font-display);
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.625rem; /* 26px */
+  font-weight: 700;
+}
+@utility text-label {
+  font-family: var(--font-display);
+  font-size: 0.875rem; /* 14px */
+  line-height: 1rem; /* 16px */
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+@utility text-body-lg {
+  font-family: var(--font-body);
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.75rem; /* 28px */
+  font-weight: 600;
+}
+@utility text-body {
+  font-family: var(--font-body);
+  font-size: 1rem; /* 16px */
+  line-height: 1.5rem; /* 24px */
+  font-weight: 500;
+}
+@utility text-body-sm {
+  font-family: var(--font-body);
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
+  font-weight: 500;
+}
+@utility text-stat {
+  font-family: var(--font-body);
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.375rem; /* 22px */
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+@layer base {
+  /* Light by default. Dark only with data-theme="dark"; following the OS comes with #27. */
+  :root {
+    color-scheme: light;
+  }
+  [data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-size: 100%;
+    line-height: 1.5rem;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
