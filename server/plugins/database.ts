@@ -1,5 +1,5 @@
-import { runMigrations } from '../db/migrate'
-import { seedShopItems } from '../db/seed'
+import { runMigrations } from '~~/server/db/migrate'
+import { seedShopItems } from '~~/server/db/seed'
 
 /**
  * On server start: apply pending migrations, then sync the shop items.

@@ -65,6 +65,8 @@ export default defineEventHandler(async (event) => {
 - 🔒 No `drizzle-orm` imports and no `useDb()` in `server/api`.
 - File names follow Nuxt: `index.get.ts`, `index.post.ts`, `[id].patch.ts`, `[id]/complete.post.ts`.
 - Validate **every** input (body, query, params) with a zod schema from `shared/schemas` via `readValidatedBody`, `getValidatedQuery` or `getValidatedRouterParams`.
+- **Auth:** `requireUser(event)` for routes that need a user, `getAuthSession(event)` when signed-out is allowed. Both look the session up once per request. Never read the auth cookie yourself.
+- **Imports** use aliases: `~~/server/…` for server code, `#shared/…` for shared code. The only exception is `server/db` (see Database).
 
 ### Services: the work
 
