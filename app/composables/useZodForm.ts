@@ -10,8 +10,16 @@ import type { z } from 'zod'
  * - `submit(action)` runs `action` with the parsed data. If it throws, the error's message
  *   becomes `formError`, so actions should throw friendly messages (see app/utils/error-messages.ts).
  */
-export function useZodForm<Schema extends z.ZodObject>(schema: Schema, initial: z.input<Schema>) {
-  type Values = z.input<Schema>
+/** Every field may start empty (e.g. no pet chosen yet); the schema decides what is required. */
+type FormValues<Schema extends z.ZodObject> = {
+  [Key in keyof z.input<Schema>]: z.input<Schema>[Key] | undefined
+}
+
+export function useZodForm<Schema extends z.ZodObject>(
+  schema: Schema,
+  initial: FormValues<Schema>,
+) {
+  type Values = FormValues<Schema>
   type FieldErrors = Partial<Record<keyof Values & string, string>>
 
   const values = ref(structuredClone(initial)) as Ref<Values>
