@@ -1,0 +1,20 @@
+# Keep the build context small and never send secrets into an image.
+node_modules
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+coverage
+.git
+.github
+.vscode
+.idea
+docs
+*.log
+.env
+.env.*
+!.env.example
+Dockerfile
+docker-compose*.yml

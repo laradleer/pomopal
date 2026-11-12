@@ -1,0 +1,44 @@
+# PomoPal: the Nuxt app and PostgreSQL.
+#   docker compose up -d --build     start everything
+#   docker compose up -d db          only the database (for `npm run dev`)
+# Settings come from .env (copy .env.example).
+name: pomopal
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pomopal}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-pomopal}
+    volumes:
+      # Postgres 18+ keeps its data under /var/lib/postgresql/<version>/
+      - pgdata:/var/lib/postgresql
+    ports:
+      # Only reachable from this machine, for `npm run dev` and DB tools.
+      - '127.0.0.1:${DB_PORT:-5432}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Inside Docker the database host is the `db` service, not localhost.
+      DATABASE_URL: postgres://${POSTGRES_USER:-pomopal}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-pomopal}
+    ports:
+      # Only reachable from this machine; Nginx on the VPS forwards the domain here.
+      - '127.0.0.1:${APP_PORT:-3000}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
