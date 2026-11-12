@@ -14,7 +14,7 @@ const { values, errors, formError, pending, submit } = useZodForm(signInSchema, 
 
 <template>
   <div>
-    <AuthGreeting message="Welcome back! Ready for another round?" />
+    <PetGreeting species="cat" mood="happy" message="Welcome back! Ready for another round?" />
 
     <h1 class="mt-8 text-title">Log in</h1>
 

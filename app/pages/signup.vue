@@ -15,7 +15,11 @@ const { values, errors, formError, pending, submit } = useZodForm(signUpSchema, 
 
 <template>
   <div>
-    <AuthGreeting message="Hi! I'm so happy you're here. Let's study together!" />
+    <PetGreeting
+      species="dog"
+      mood="happy"
+      message="Hi! I'm so happy you're here. Let's study together!"
+    />
 
     <h1 class="mt-8 text-title">Create your account</h1>
 

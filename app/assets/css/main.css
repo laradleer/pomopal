@@ -76,6 +76,15 @@
   /* Dimmed background behind sheets and dialogs (same in both themes) */
   --color-scrim: rgb(13 11 9 / 0.55);
 
+  /* Pet illustration (same in both themes: the pet should not change colour in dark mode) */
+  --color-pet-cat: #f4a64a;
+  --color-pet-cat-shade: #d9822b;
+  --color-pet-dog: #c8915f;
+  --color-pet-dog-shade: #9a6438;
+  --color-pet-cream: #fff3e2;
+  --color-pet-line: #2b2825;
+  --color-pet-blush: #ff9e8a;
+
   /* Fonts: Rubik for display, Nunito for body. Loaded by @nuxt/fonts. */
   --font-display: 'Rubik', system-ui, sans-serif;
   --font-body: 'Nunito', system-ui, sans-serif;
@@ -102,6 +111,7 @@
   --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   --animate-pop: pop 360ms var(--ease-pop);
   --animate-sheet-in: sheet-in 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-hop: hop 700ms ease-out;
 
   @keyframes pop {
     0% {
@@ -111,6 +121,22 @@
     100% {
       transform: scale(1);
       opacity: 1;
+    }
+  }
+
+  @keyframes hop {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    30% {
+      transform: translateY(-8%);
+    }
+    55% {
+      transform: translateY(0);
+    }
+    75% {
+      transform: translateY(-3%);
     }
   }
 

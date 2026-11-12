@@ -62,6 +62,11 @@ The one rule: **calm canvas, loud rewards.**
 | `on-brand` | `#ffffff` | `#16130f` | Text on tomato, leaf, grape, sky |
 | `focus-ring` | `#1c6cc8` | `#5fa8ff` | Keyboard focus outline |
 | `scrim` | `rgb(13 11 9 / 0.55)` | same | Dimmed background behind sheets |
+| `pet-cat`, `pet-cat-shade` | `#f4a64a`, `#d9822b` | same | Cat fur, stripes |
+| `pet-dog`, `pet-dog-shade` | `#c8915f`, `#9a6438` | same | Dog fur, ears |
+| `pet-cream` | `#fff3e2` | same | Muzzle, belly, eye shine |
+| `pet-line` | `#2b2825` | same | Eyes, nose, mouth |
+| `pet-blush` | `#ff9e8a` | same | Cheeks, inner ears, tongue |
 
 Every text colour passes a 4.5:1 contrast ratio in both themes.
 

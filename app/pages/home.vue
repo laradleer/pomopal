@@ -3,13 +3,14 @@ useSeoMeta({ title: 'Home' })
 
 const profile = useProfileStore()
 const pet = usePetStore()
+const { mood, line } = usePetMood()
 </script>
 
 <template>
   <div class="space-y-6">
-    <header>
+    <header class="space-y-4">
       <h1 class="text-title">Hi, {{ profile.displayName }}!</h1>
-      <p class="mt-1 text-body text-ink-muted">{{ pet.name }} is ready to study with you.</p>
+      <PetGreeting :species="pet.species" :mood="mood" :name="pet.name" :message="line" />
     </header>
 
     <!-- Bento: one column on phones, two from md: up. -->
