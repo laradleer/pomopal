@@ -79,6 +79,8 @@ Never edit a migration that is already on `main`; add a new one instead. Shop it
 
 **Deploy** (`.github/workflows/deploy.yml`) runs after CI passes on `main`, for that exact commit. It connects to the VPS over SSH, checks out the commit and runs `docker compose up -d --build --wait`, which returns only when the app is healthy and migrations have run. You can also start it by hand under **Actions → Deploy → Run workflow**.
 
+**Live:** https://pomopal.viten.io. It runs on the team VPS (Debian 12) from `/root/pomopal`, next to other sites, so it uses its own free localhost ports: app `APP_PORT=3420` and database `DB_PORT=5442` (both set in the VPS `.env`, never public). Nginx on the host is the only thing on ports 80/443.
+
 ### One-time VPS setup
 
 1. Install Docker Engine with the Compose plugin, and add the deploy user to the `docker` group.
@@ -87,6 +89,7 @@ Never edit a migration that is already on `main`; add a new one instead. Shop it
    git clone https://github.com/laradleer/pomopal.git ~/pomopal
    cd ~/pomopal && cp .env.example .env   # strong POSTGRES_PASSWORD and BETTER_AUTH_SECRET, BETTER_AUTH_URL=https://your-domain
    ```
+   Pick an `APP_PORT` and `DB_PORT` that are free on the server (`ss -ltn`), then start it once: `docker compose up -d --build --wait`.
 3. Create a key pair just for deploys, and allow it on the VPS:
    ```bash
    ssh-keygen -t ed25519 -f pomopal-deploy -N "" -C "pomopal deploy"
@@ -104,7 +107,14 @@ Never edit a migration that is already on `main`; add a new one instead. Shop it
    | Variable | `APP_DIR`         | _optional_, clone path relative to home (default `pomopal`)         |
    | Variable | `DEPLOY_ENABLED`  | `true`, which turns deploys on                                      |
 
-5. Nginx and HTTPS in front of port 3000: see #8.
+5. Nginx and HTTPS. Point a DNS A record at the server, then install the server block from [`deploy/nginx/pomopal.conf`](deploy/nginx/pomopal.conf) (it proxies to `127.0.0.1:APP_PORT` with the `X-Forwarded-*` and upgrade headers):
+   ```bash
+   cp deploy/nginx/pomopal.conf /etc/nginx/sites-available/pomopal.viten.io   # first without the Certbot lines
+   ln -s /etc/nginx/sites-available/pomopal.viten.io /etc/nginx/sites-enabled/
+   nginx -t && systemctl reload nginx
+   certbot --nginx -d pomopal.viten.io --redirect   # adds HTTPS and the HTTP → HTTPS redirect
+   certbot renew --dry-run                          # renewal works (the certbot timer renews it)
+   ```
 
 Until `DEPLOY_ENABLED` is `true`, the deploy workflow is skipped, so merging to `main` is safe before the VPS is ready.
 
