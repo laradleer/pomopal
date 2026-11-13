@@ -53,12 +53,12 @@ A handler does four things: check the user, validate the input, call **one** ser
 
 ```ts
 // server/api/shop/[itemId]/buy.post.ts
-import { buyItemParams } from '#shared/schemas/shop'
+import { shopItemParamsSchema } from '#shared/schemas/shop'
 import { buyItem } from '~~/server/services/shop'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUser(event)
-  const { itemId } = getValidParams(event, buyItemParams)
+  const { itemId } = getValidParams(event, shopItemParamsSchema)
   return buyItem(user.id, itemId)
 })
 ```
