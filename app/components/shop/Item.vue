@@ -39,8 +39,11 @@ const STATE_CLASSES: Record<ShopItemState, string> = {
   <button
     type="button"
     :aria-pressed="props.selected"
-    class="flex h-full w-full flex-col items-center gap-2 rounded-md border p-3 text-center transition-colors hover:border-border-strong aria-pressed:outline-3 aria-pressed:outline-offset-2 aria-pressed:outline-tomato"
-    :class="STATE_CLASSES[props.state]"
+    class="flex h-full w-full flex-col items-center gap-2 rounded-md border p-3 text-center transition-colors hover:border-border-strong aria-pressed:outline-3 aria-pressed:outline-offset-2"
+    :class="[
+      STATE_CLASSES[props.state],
+      props.state === 'equipped' ? 'aria-pressed:outline-leaf' : 'aria-pressed:outline-tomato',
+    ]"
     @click="emit('click')"
   >
     <span
