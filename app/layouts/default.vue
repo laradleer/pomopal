@@ -14,5 +14,6 @@
     </main>
     <AppTabBar />
     <RewardLevelUp />
+    <RewardCoinFlight />
   </div>
 </template>

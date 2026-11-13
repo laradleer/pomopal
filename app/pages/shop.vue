@@ -22,6 +22,11 @@ const preview = computed(() =>
     : pet.equipped,
 )
 const line = computed(() => reply.value ?? shopLine(selected.value, profile.coins))
+/** The coins fly to the button that was pressed. */
+function onBuy(event: MouseEvent) {
+  if (selected.value) void buy(selected.value, event.currentTarget)
+}
+
 const canBuySelected = computed(() =>
   Boolean(selected.value && !selected.value.owned && !selected.value.locked),
 )
@@ -51,7 +56,7 @@ const canBuySelected = computed(() =>
           block
           icon="coins"
           :loading="isBuying"
-          @click="buy(selected)"
+          @click="onBuy"
         >
           Buy for {{ selected.price }} coins
         </UiButton>

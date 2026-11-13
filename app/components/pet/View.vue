@@ -217,11 +217,18 @@ const sparklePath = (x: number, y: number, size: number) =>
     :height="props.size"
     role="img"
     :aria-label="label"
+    :data-pet="props.live ? 'live' : undefined"
     class="shrink-0 overflow-visible"
   >
     <g>
       <slot name="background">
-        <PetAccessory v-if="props.equipped.background" :asset-key="props.equipped.background" />
+        <Transition name="accessory-fade">
+          <PetAccessory
+            v-if="props.equipped.background"
+            :key="props.equipped.background"
+            :asset-key="props.equipped.background"
+          />
+        </Transition>
       </slot>
     </g>
 
@@ -266,7 +273,13 @@ const sparklePath = (x: number, y: number, size: number) =>
         <!-- Neck accessories sit on the body, under the chin -->
         <g transform="translate(100 142)">
           <slot name="neck">
-            <PetAccessory v-if="props.equipped.neck" :asset-key="props.equipped.neck" />
+            <Transition name="accessory-drop">
+              <PetAccessory
+                v-if="props.equipped.neck"
+                :key="props.equipped.neck"
+                :asset-key="props.equipped.neck"
+              />
+            </Transition>
           </slot>
         </g>
 
@@ -477,12 +490,24 @@ const sparklePath = (x: number, y: number, size: number) =>
           <!-- Head and face accessories -->
           <g transform="translate(100 46)">
             <slot name="head">
-              <PetAccessory v-if="props.equipped.head" :asset-key="props.equipped.head" />
+              <Transition name="accessory-drop">
+                <PetAccessory
+                  v-if="props.equipped.head"
+                  :key="props.equipped.head"
+                  :asset-key="props.equipped.head"
+                />
+              </Transition>
             </slot>
           </g>
           <g transform="translate(100 96)">
             <slot name="face">
-              <PetAccessory v-if="props.equipped.face" :asset-key="props.equipped.face" />
+              <Transition name="accessory-drop">
+                <PetAccessory
+                  v-if="props.equipped.face"
+                  :key="props.equipped.face"
+                  :asset-key="props.equipped.face"
+                />
+              </Transition>
             </slot>
           </g>
         </g>
@@ -649,6 +674,28 @@ const sparklePath = (x: number, y: number, size: number) =>
   translate: 0 2px;
 }
 
+/* ---- Accessories: put on with a drop and a squash, taken off with a pop ---- */
+
+.accessory-drop-enter-active,
+.accessory-drop-leave-active {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.accessory-drop-enter-active {
+  animation: accessory-drop 520ms var(--ease-soft);
+}
+.accessory-drop-leave-active {
+  animation: accessory-pop var(--duration-move) ease-in both;
+}
+.accessory-fade-enter-active,
+.accessory-fade-leave-active {
+  transition: opacity var(--duration-move) var(--ease-soft);
+}
+.accessory-fade-enter-from,
+.accessory-fade-leave-to {
+  opacity: 0;
+}
+
 /* ---- Decorations ---- */
 
 .pet-zs path {
@@ -704,6 +751,38 @@ const sparklePath = (x: number, y: number, size: number) =>
   }
   100% {
     translate: 6px -10px;
+    opacity: 0;
+  }
+}
+
+@keyframes accessory-drop {
+  0% {
+    translate: 0 -36px;
+    opacity: 0;
+  }
+  55% {
+    translate: 0 0;
+    scale: 1 1;
+    opacity: 1;
+  }
+  75% {
+    scale: 1.12 0.85;
+  }
+  100% {
+    scale: 1 1;
+  }
+}
+
+@keyframes accessory-pop {
+  0% {
+    scale: 1;
+    opacity: 1;
+  }
+  35% {
+    scale: 1.15;
+  }
+  100% {
+    scale: 0;
     opacity: 0;
   }
 }
