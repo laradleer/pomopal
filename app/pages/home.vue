@@ -10,7 +10,13 @@ const { mood, line } = usePetMood()
   <div class="space-y-6">
     <header class="space-y-4">
       <h1 class="text-title">Hi, {{ profile.displayName }}!</h1>
-      <PetGreeting :species="pet.species" :mood="mood" :name="pet.name" :message="line" />
+      <PetGreeting
+        :species="pet.species"
+        :mood="mood"
+        :name="pet.name"
+        :equipped="pet.equipped"
+        :message="line"
+      />
     </header>
 
     <!-- Bento: one column on phones, two from md: up. -->

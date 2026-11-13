@@ -1,4 +1,5 @@
 import type { PetMood, PetSpecies } from '../constants'
+import type { EquippedItems } from './shop'
 
 /** The response of GET /api/me: who is signed in, their progress and their pet. */
 export type Me = {
@@ -33,4 +34,6 @@ export type MePet = {
   species: PetSpecies
   name: string
   mood: PetMood
+  /** What the pet wears, by slot. */
+  equipped: EquippedItems
 }

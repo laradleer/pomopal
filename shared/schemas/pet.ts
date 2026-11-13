@@ -11,3 +11,8 @@ export const petCreateSchema = z.object({
 })
 
 export type PetCreateInput = z.infer<typeof petCreateSchema>
+
+/** PATCH /api/pet: rename the pet (same rules as the name at onboarding). */
+export const petRenameSchema = petCreateSchema.pick({ name: true })
+
+export type PetRenameInput = z.infer<typeof petRenameSchema>

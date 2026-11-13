@@ -15,9 +15,11 @@ const SLOT_TABS = [
   { value: 'background', label: 'Background' },
 ] as const satisfies readonly { value: ItemSlot; label: string }[]
 
-/** The pet wearing the selected item, to try it on before buying. */
+/** The pet in what it wears now, with the selected item tried on. */
 const preview = computed(() =>
-  selected.value ? { [selected.value.slot]: selected.value.assetKey } : {},
+  selected.value
+    ? { ...pet.equipped, [selected.value.slot]: selected.value.assetKey }
+    : pet.equipped,
 )
 const line = computed(() => reply.value ?? shopLine(selected.value, profile.coins))
 const canBuySelected = computed(() =>
@@ -51,6 +53,9 @@ const canBuySelected = computed(() =>
           @click="buy(selected)"
         >
           Buy for {{ selected.price }} coins
+        </UiButton>
+        <UiButton v-else-if="selected?.owned" block variant="outline" icon="paw-print" to="/pet">
+          Go to the wardrobe
         </UiButton>
       </section>
 
