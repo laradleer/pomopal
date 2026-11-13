@@ -18,6 +18,7 @@ const emit = defineEmits<{
 const checkboxId = useId()
 const checkbox = useTemplateRef<HTMLInputElement>('checkbox')
 const motion = useMotion()
+const sound = useSound()
 
 const sessionsLabel = computed(() => {
   const count = props.task.sessionsCount
@@ -28,6 +29,7 @@ function onChange(event: Event) {
   const isDone = (event.target as HTMLInputElement).checked
   // A small pop when a task is ticked off; the strike-through draws itself (CSS below).
   if (isDone) {
+    sound.play('task')
     motion.play(checkbox.value, [{ scale: 1 }, { scale: 1.45 }, { scale: 1 }], {
       duration: 'move',
       easing: 'pop',

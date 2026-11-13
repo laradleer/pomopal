@@ -45,6 +45,11 @@ const sizeClasses: Record<Size, string> = {
 }
 
 const NuxtLink = resolveComponent('NuxtLink')
+const sound = useSound()
+
+function onPress() {
+  if (!isInactive.value) sound.play('tap')
+}
 const isInactive = computed(() => props.disabled || props.loading)
 const isLink = computed(() => Boolean(props.to) && !isInactive.value)
 const iconSize = computed(() => (props.size === 'sm' ? 16 : 20))
@@ -57,6 +62,7 @@ const iconSize = computed(() => (props.size === 'sm' ? 16 : 20))
     :aria-busy="props.loading || undefined"
     class="mb-1 inline-flex pressable items-center justify-center text-label whitespace-nowrap select-none hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
     :class="[variantClasses[props.variant], sizeClasses[props.size], props.block && 'w-full']"
+    @pointerdown="onPress"
   >
     <UiIcon
       v-if="props.loading"
