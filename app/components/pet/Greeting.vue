@@ -11,8 +11,10 @@ const props = withDefaults(
     name?: string
     size?: number
     equipped?: EquippedItems
+    /** The student's mascot (see <PetView live>). */
+    live?: boolean
   }>(),
-  { name: undefined, size: 96, equipped: () => ({}) },
+  { name: undefined, size: 96, equipped: () => ({}), live: false },
 )
 </script>
 
@@ -24,6 +26,7 @@ const props = withDefaults(
       :name="props.name"
       :size="props.size"
       :equipped="props.equipped"
+      :live="props.live"
     />
     <PetBubble class="mb-4">{{ props.message }}</PetBubble>
   </div>

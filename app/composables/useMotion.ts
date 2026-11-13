@@ -15,7 +15,8 @@ export type MotionEase = 'pop' | 'soft' | 'in-out-soft' | 'spring'
 
 type PlayOptions = Omit<KeyframeAnimationOptions, 'duration' | 'easing'> & {
   duration?: MotionDuration | number
-  easing?: MotionEase
+  /** A motion token, or 'linear' when the keyframes carry their own timing (offsets). */
+  easing?: MotionEase | 'linear'
 }
 
 const STORAGE_KEY = 'pomopal:animations'
@@ -72,7 +73,7 @@ export function useMotion() {
     return element.animate(keyframes, {
       ...rest,
       duration: durationMs(duration),
-      easing: cssToken(`--ease-${easing}`) || 'ease-out',
+      easing: easing === 'linear' ? 'linear' : cssToken(`--ease-${easing}`) || 'ease-out',
     })
   }
 

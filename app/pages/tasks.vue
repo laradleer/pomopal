@@ -97,6 +97,7 @@ async function confirmDelete() {
         mood="happy"
         :name="pet.name"
         :equipped="pet.equipped"
+        live
         message="No tasks yet! Add one, then pick it before your next focus session."
       />
     </section>

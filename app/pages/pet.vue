@@ -61,6 +61,7 @@ async function saveName(input: PetRenameInput) {
           :name="pet.name"
           :equipped="pet.equipped"
           :size="220"
+          live
         />
         <span class="rounded-pill bg-surface px-3 py-1 text-label text-ink-muted">
           {{ MOOD_LABEL[mood] }}

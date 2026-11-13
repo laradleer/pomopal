@@ -43,6 +43,7 @@ const canBuySelected = computed(() =>
           :name="pet.name"
           :equipped="preview"
           :size="180"
+          live
         />
         <PetBubble class="w-full">{{ line }}</PetBubble>
         <UiButton
