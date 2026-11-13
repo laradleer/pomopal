@@ -1,33 +1,26 @@
 <script setup lang="ts">
+// Phones: the pet's room first, then the timer, then progress. From md: up, progress moves to a
+// column on the right (docs/04-design-system.md → Layout).
 useSeoMeta({ title: 'Home' })
 
 const profile = useProfileStore()
-const pet = usePetStore()
+const timer = useTimerStore()
 const { mood, line } = usePetMood()
 const { openTasks, setDone } = await useTasks()
 </script>
 
 <template>
-  <div class="space-y-6">
-    <header class="space-y-4">
+  <div
+    class="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:grid-cols-[minmax(0,1fr)_22rem]"
+  >
+    <div class="space-y-6">
       <h1 class="text-title">Hi, {{ profile.displayName }}!</h1>
-      <PetGreeting
-        :species="pet.species"
-        :mood="mood"
-        :name="pet.name"
-        :equipped="pet.equipped"
-        :message="line"
-        live
-      />
-    </header>
-
-    <!-- Bento: one column on phones, two from md: up. -->
-    <div class="grid gap-6 md:grid-cols-2">
+      <PetStage :mood="mood" :message="line" :compact="timer.isActive" />
       <TimerPanel :tasks="openTasks" />
-      <div class="space-y-6">
-        <RewardLevelCard />
-        <TaskTodayCard :tasks="openTasks" @toggle="setDone" />
-      </div>
     </div>
+    <aside class="space-y-6 md:pt-14" aria-label="Your progress">
+      <RewardLevelCard />
+      <TaskTodayCard :tasks="openTasks" @toggle="setDone" />
+    </aside>
   </div>
 </template>

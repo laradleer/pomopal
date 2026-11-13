@@ -143,6 +143,7 @@
   /* Layout widths: phone column and the 2-column desktop bento */
   --container-phone: 30rem; /* 480px */
   --container-app: 60rem; /* 960px */
+  --container-wide: 76rem; /* 1216px: the 3-column desktop layout next to the navigation rail */
 
   /*
    * Motion (docs/04-design-system.md → Motion). Durations scale with how important the moment
@@ -342,6 +343,9 @@
 .tab-pill {
   view-transition-name: tab-pill;
 }
+.rail-pill {
+  view-transition-name: rail-pill;
+}
 
 :root {
   --nav-shift: 0px;
@@ -363,7 +367,8 @@
 ::view-transition-new(page) {
   animation: page-in 220ms var(--ease-soft) both;
 }
-::view-transition-group(tab-pill) {
+::view-transition-group(tab-pill),
+::view-transition-group(rail-pill) {
   animation-duration: var(--duration-move);
   animation-timing-function: var(--ease-soft);
 }

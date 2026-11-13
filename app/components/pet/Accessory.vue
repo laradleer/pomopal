@@ -172,6 +172,38 @@ const GROUND_EDGE = 'V176 Q200 200 176 200 H24 Q0 200 0 176 Z'
     <path :d="`M0 166 H200 ${GROUND_EDGE}`" class="fill-pet-wood-shade" />
   </g>
 
+  <!-- The default room (not sold in the shop): a wall with a window and a plant, a wooden floor -->
+  <g v-else-if="props.assetKey === 'room'">
+    <path :d="FRAME" class="fill-pet-wall" />
+    <rect
+      x="132"
+      y="24"
+      width="46"
+      height="50"
+      rx="6"
+      stroke-width="5"
+      class="fill-pet-cream stroke-pet-wood"
+    />
+    <rect x="137" y="29" width="36" height="40" rx="2" class="fill-pet-blue opacity-25" />
+    <path d="M155 26 V72 M134 49 H176" stroke-width="4" class="stroke-pet-wood" />
+    <rect
+      x="24"
+      y="34"
+      width="38"
+      height="30"
+      rx="3"
+      stroke-width="4"
+      class="fill-pet-gold stroke-pet-wood"
+    />
+    <circle cx="36" cy="46" r="5" class="fill-pet-cream" />
+    <path d="M28 60 L40 50 L48 56 L58 46 V60 Z" class="fill-pet-green opacity-80" />
+    <ellipse cx="24" cy="128" rx="9" ry="16" class="fill-pet-green" />
+    <ellipse cx="36" cy="124" rx="9" ry="18" class="fill-pet-green" />
+    <rect x="18" y="136" width="26" height="30" rx="4" class="fill-pet-red-shade" />
+    <path :d="`M0 166 H200 ${GROUND_EDGE}`" class="fill-pet-wood" />
+    <ellipse cx="100" cy="184" rx="66" ry="9" class="fill-pet-blush opacity-50" />
+  </g>
+
   <g v-else-if="props.assetKey === 'night-sky'">
     <path :d="FRAME" class="fill-pet-night" />
     <circle

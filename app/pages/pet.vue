@@ -51,23 +51,13 @@ async function saveName(input: PetRenameInput) {
     </div>
 
     <div class="grid gap-6 md:grid-cols-2 md:items-start">
-      <!-- Pet stage -->
-      <section
-        class="flex flex-col items-center gap-4 rounded-xl bg-canvas-warm px-6 py-10 md:sticky md:top-24"
-      >
-        <PetView
-          :species="pet.species"
-          :mood="mood"
-          :name="pet.name"
-          :equipped="pet.equipped"
-          :size="220"
-          live
-        />
-        <span class="rounded-pill bg-surface px-3 py-1 text-label text-ink-muted">
-          {{ MOOD_LABEL[mood] }}
-        </span>
-        <PetBubble>{{ line }}</PetBubble>
-      </section>
+      <PetStage :mood="mood" :message="line" class="md:sticky md:top-24">
+        <template #badge>
+          <span class="rounded-pill bg-surface px-3 py-1 text-label text-ink-muted shadow-float">
+            {{ MOOD_LABEL[mood] }}
+          </span>
+        </template>
+      </PetStage>
 
       <UiCard class="space-y-6">
         <div class="space-y-1">
