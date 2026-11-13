@@ -22,4 +22,5 @@ useHead(
     <NuxtPage />
   </NuxtLayout>
   <UiToaster />
+  <AppLoader />
 </template>

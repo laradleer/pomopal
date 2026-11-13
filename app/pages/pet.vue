@@ -8,7 +8,7 @@ useSeoMeta({ title: 'Your pet' })
 
 const pet = usePetStore()
 const { mood, line } = usePetMood()
-const { sections, isEmpty, toggle } = await useInventory()
+const { sections, isEmpty, pending: isLoadingWardrobe, toggle } = await useInventory()
 const { renamePet } = usePet()
 
 const MOOD_LABEL: Record<PetMood, string> = {
@@ -75,7 +75,10 @@ async function saveName(input: PetRenameInput) {
           <p class="text-body-sm text-ink-muted">Tap an item to put it on or take it off.</p>
         </div>
 
-        <div v-if="isEmpty" class="flex flex-col items-center gap-4 py-6 text-center">
+        <div v-if="isLoadingWardrobe && isEmpty" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <UiSkeleton v-for="index in 3" :key="index" class="aspect-[3/4]" />
+        </div>
+        <div v-else-if="isEmpty" class="flex flex-col items-center gap-4 py-6 text-center">
           <p class="max-w-xs text-body text-ink-muted">
             Nothing here yet. Earn coins with focus sessions and spend them in the shop!
           </p>

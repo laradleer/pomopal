@@ -7,7 +7,8 @@ import type { TaskDto } from '#shared/types/task'
 useSeoMeta({ title: 'Tasks' })
 
 const pet = usePetStore()
-const { tasks, openTasks, doneTasks, addTask, renameTask, setDone, deleteTask } = await useTasks()
+const { tasks, openTasks, doneTasks, pending, addTask, renameTask, setDone, deleteTask } =
+  await useTasks()
 
 // ---- Add ----
 
@@ -86,9 +87,13 @@ async function confirmDelete() {
       <UiAlert v-if="addError">{{ addError }}</UiAlert>
     </form>
 
+    <div v-if="pending && tasks.length === 0" class="space-y-2 md:max-w-phone">
+      <UiSkeleton v-for="index in 3" :key="index" class="h-16" />
+    </div>
+
     <!-- Empty state -->
     <section
-      v-if="tasks.length === 0"
+      v-else-if="tasks.length === 0"
       class="rounded-xl bg-canvas-warm px-6 py-8"
       aria-label="No tasks yet"
     >
