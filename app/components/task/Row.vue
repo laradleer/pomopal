@@ -16,6 +16,8 @@ const emit = defineEmits<{
 }>()
 
 const checkboxId = useId()
+const checkbox = useTemplateRef<HTMLInputElement>('checkbox')
+const motion = useMotion()
 
 const sessionsLabel = computed(() => {
   const count = props.task.sessionsCount
@@ -23,7 +25,15 @@ const sessionsLabel = computed(() => {
 })
 
 function onChange(event: Event) {
-  emit('toggle', (event.target as HTMLInputElement).checked)
+  const isDone = (event.target as HTMLInputElement).checked
+  // A small pop when a task is ticked off; the strike-through draws itself (CSS below).
+  if (isDone) {
+    motion.play(checkbox.value, [{ scale: 1 }, { scale: 1.45 }, { scale: 1 }], {
+      duration: 'move',
+      easing: 'pop',
+    })
+  }
+  emit('toggle', isDone)
 }
 </script>
 
@@ -34,17 +44,20 @@ function onChange(event: Event) {
   >
     <input
       :id="checkboxId"
+      ref="checkbox"
       type="checkbox"
       :checked="props.task.done"
       class="size-5 shrink-0 cursor-pointer accent-leaf"
       @change="onChange"
     />
     <label :for="checkboxId" class="min-w-0 flex-1 cursor-pointer">
-      <span
-        class="block text-body break-words"
-        :class="props.task.done ? 'text-ink-muted line-through' : 'text-ink'"
-      >
-        {{ props.task.title }}
+      <span class="block text-body break-words">
+        <span
+          class="task-title transition-colors duration-(--duration-move)"
+          :class="props.task.done ? 'is-done text-ink-muted' : 'text-ink'"
+        >
+          {{ props.task.title }}
+        </span>
       </span>
       <span class="flex items-center gap-1 text-body-sm text-ink-muted">
         <UiIcon name="timer" :size="16" />
@@ -72,3 +85,16 @@ function onChange(event: Event) {
     </template>
   </li>
 </template>
+
+<style scoped>
+/* The strike-through draws from left to right, on every line of a long title. */
+.task-title {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 55% / 0% 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size var(--duration-move) var(--ease-soft);
+}
+.task-title.is-done {
+  background-size: 100% 2px;
+}
+</style>

@@ -7,6 +7,8 @@ import type { BuyResult, ShopItemDto } from '#shared/types/shop'
  */
 export async function useShop() {
   const user = useUserStore()
+  const rewardFeedback = useRewardFeedback()
+  const petAnimator = usePetAnimator()
 
   const {
     data: items,
@@ -28,11 +30,14 @@ export async function useShop() {
     reply.value = null
   }
 
-  async function buy(item: ShopItemDto): Promise<void> {
+  /** Buys `item`; `paidAt` is where the coins fly to (the Buy button). */
+  async function buy(item: ShopItemDto, paidAt?: EventTarget | null): Promise<void> {
     if (isBuying.value) return
     isBuying.value = true
     try {
       await $fetch<BuyResult>(`/api/shop/${item.id}/buy`, { method: 'POST' })
+      rewardFeedback.spendCoins(item.price, paidAt instanceof Element ? paidAt : null)
+      petAnimator.send('celebrate')
       // The coin chip and the tiles update together.
       await Promise.all([user.refresh(), refresh()])
       reply.value = boughtLine(item)

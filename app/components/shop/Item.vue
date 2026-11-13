@@ -27,6 +27,27 @@ const props = withDefaults(
 
 const emit = defineEmits<{ click: [] }>()
 
+const tile = useTemplateRef<HTMLButtonElement>('tile')
+const motion = useMotion()
+
+function onClick() {
+  // A locked item gives a small "not yet" shake (the pet's bubble says when it unlocks).
+  if (props.state === 'locked') {
+    motion.play(
+      tile.value,
+      [
+        { translate: '0 0' },
+        { translate: '-6px 0' },
+        { translate: '5px 0' },
+        { translate: '-3px 0' },
+        { translate: '0 0' },
+      ],
+      { duration: 'move', easing: 'linear' },
+    )
+  }
+  emit('click')
+}
+
 const STATE_CLASSES: Record<ShopItemState, string> = {
   forSale: 'border-border bg-surface',
   owned: 'border-leaf bg-surface',
@@ -37,6 +58,7 @@ const STATE_CLASSES: Record<ShopItemState, string> = {
 
 <template>
   <button
+    ref="tile"
     type="button"
     :aria-pressed="props.selected"
     class="flex h-full w-full flex-col items-center gap-2 rounded-md border p-3 text-center transition-colors hover:border-border-strong aria-pressed:outline-3 aria-pressed:outline-offset-2"
@@ -44,7 +66,7 @@ const STATE_CLASSES: Record<ShopItemState, string> = {
       STATE_CLASSES[props.state],
       props.state === 'equipped' ? 'aria-pressed:outline-leaf' : 'aria-pressed:outline-tomato',
     ]"
-    @click="emit('click')"
+    @click="onClick"
   >
     <span
       class="grid aspect-square w-full place-items-center rounded-sm bg-canvas-warm p-3"
