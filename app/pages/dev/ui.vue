@@ -35,6 +35,25 @@ const colorGroups = [
   { name: 'Long break · info', tokens: ['sky', 'sky-tint'] },
   { name: 'Coins · streak', tokens: ['sun', 'sun-edge', 'sun-ink', 'sun-tint', 'on-sun'] },
   { name: 'Other', tokens: ['berry', 'on-brand', 'focus-ring', 'scrim'] },
+  {
+    name: 'Pet (same in both themes)',
+    tokens: ['pet-cat', 'pet-cat-shade', 'pet-dog', 'pet-dog-shade', 'pet-cream', 'pet-line'],
+  },
+  {
+    name: 'Accessories (same in both themes)',
+    tokens: [
+      'pet-blush',
+      'pet-red',
+      'pet-blue',
+      'pet-purple',
+      'pet-gold',
+      'pet-green',
+      'pet-wall',
+      'pet-wood',
+      'pet-night',
+      'pet-star',
+    ],
+  },
 ] as const
 
 // Brand colours with the text colour that must be used on them.

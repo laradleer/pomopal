@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { PetMood, PetSpecies } from '#shared/constants'
+import type { EquippedItems } from '#shared/types/shop'
 
 /**
  * The cat or dog, drawn in SVG (200 × 200) in one flat, rounded style, with four moods.
  *
- * Accessories go in named slots that are already placed on the pet's anchors, so every item
- * fits both species. Draw them around (0, 0):
+ * `equipped` draws the pet's items (<PetAccessory>). Each one goes in a named slot that is
+ * already placed on the pet's anchors, so every item fits both species. A slot's content can be
+ * replaced, e.g. to preview something else. Draw accessories around (0, 0):
  *   background  behind the pet (full 200 × 200 box)
  *   neck        centre of the neck, under the chin
  *   head        top of the head
@@ -19,8 +21,10 @@ const props = withDefaults(
     size?: number
     /** Used for the accessible label, e.g. "Biscuit". */
     name?: string
+    /** What the pet wears, by slot. */
+    equipped?: EquippedItems
   }>(),
-  { size: 120, name: undefined },
+  { size: 120, name: undefined, equipped: () => ({}) },
 )
 
 defineSlots<{
@@ -66,7 +70,11 @@ watch(
     :aria-label="label"
     class="shrink-0 overflow-visible"
   >
-    <g><slot name="background" /></g>
+    <g>
+      <slot name="background">
+        <PetAccessory v-if="props.equipped.background" :asset-key="props.equipped.background" />
+      </slot>
+    </g>
 
     <g :key="hops" :class="hops > 0 && 'motion-safe:animate-hop'">
       <!-- Shadow -->
@@ -97,7 +105,11 @@ watch(
       <ellipse cx="118" cy="186" rx="13" ry="8" :class="fur.fill" />
 
       <!-- Neck accessories sit on the body, under the chin -->
-      <g transform="translate(100 142)"><slot name="neck" /></g>
+      <g transform="translate(100 142)">
+        <slot name="neck">
+          <PetAccessory v-if="props.equipped.neck" :asset-key="props.equipped.neck" />
+        </slot>
+      </g>
 
       <!-- Cat ears sit behind the head -->
       <g v-if="props.species === 'cat'">
@@ -263,8 +275,16 @@ watch(
       </g>
 
       <!-- Head and face accessories -->
-      <g transform="translate(100 46)"><slot name="head" /></g>
-      <g transform="translate(100 96)"><slot name="face" /></g>
+      <g transform="translate(100 46)">
+        <slot name="head">
+          <PetAccessory v-if="props.equipped.head" :asset-key="props.equipped.head" />
+        </slot>
+      </g>
+      <g transform="translate(100 96)">
+        <slot name="face">
+          <PetAccessory v-if="props.equipped.face" :asset-key="props.equipped.face" />
+        </slot>
+      </g>
     </g>
   </svg>
 </template>

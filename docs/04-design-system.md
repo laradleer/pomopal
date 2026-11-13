@@ -67,6 +67,9 @@ The one rule: **calm canvas, loud rewards.**
 | `pet-cream` | `#fff3e2` | same | Muzzle, belly, eye shine |
 | `pet-line` | `#2b2825` | same | Eyes, nose, mouth |
 | `pet-blush` | `#ff9e8a` | same | Cheeks, inner ears, tongue |
+| `pet-red`, `pet-blue`, `pet-purple`, `pet-gold` (+ `-shade`), `pet-green` | `#e5533d`, `#3f87e0`, `#7a52e8`, `#ffc83d`, `#52b043` | same | Shop accessories |
+| `pet-wall`, `pet-wood`, `pet-wood-shade` | `#f6e6cc`, `#b07a48`, `#8a5a30` | same | Library background |
+| `pet-night`, `pet-night-shade`, `pet-star` | `#22295a`, `#161b3d`, `#fff1b8` | same | Night sky background |
 
 Every text colour passes a 4.5:1 contrast ratio in both themes.
 
