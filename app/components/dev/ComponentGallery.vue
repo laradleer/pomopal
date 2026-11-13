@@ -23,6 +23,7 @@ const subjects = [
   { value: '2', label: 'Write the lab report' },
 ]
 const focusMinutes = ref<number | undefined>(25)
+const isSwitchOn = ref(true)
 
 const isSheetOpen = ref(false)
 const lastSheetChoice = ref<string>()
@@ -288,7 +289,7 @@ const icons = [
     </div>
 
     <div class="space-y-3">
-      <h3 class="text-label text-ink-muted">UiSelect · UiStepper</h3>
+      <h3 class="text-label text-ink-muted">UiSelect · UiStepper · UiSwitch</h3>
       <div class="max-w-phone space-y-4">
         <UiFormField v-slot="field" label="What are you studying?">
           <UiSelect v-model="subject" v-bind="field" :options="subjects" />
@@ -304,6 +305,12 @@ const icons = [
             unit="min"
           />
         </UiFormField>
+        <UiSwitch
+          v-model="isSwitchOn"
+          label="Animations"
+          description="Moving effects, rewards and your pet's animations."
+        />
+        <UiSwitch v-model="isSwitchOn" label="Disabled" disabled />
       </div>
     </div>
 

@@ -138,11 +138,39 @@ Every text colour passes a 4.5:1 contrast ratio in both themes.
 
 ## Motion
 
-- Button press: 80ms sink.
-- Reward pop: 360ms with a small overshoot.
-- XP bar fill: 400ms ease-out.
-- After a session, coins fly to the coin chip and the pet does a happy animation.
-- Respect `prefers-reduced-motion`: no pops or flying, values just update.
+PomoPal should feel like a small game with a living mascot (epic #69). Motion is how the app answers the student.
+
+**Principles**
+
+1. **The pet is never fully still.** Breathing, blinking and the odd ear twitch, all subtle.
+2. **Every action gets an answer within about 100 ms:** a press, a sparkle, a look from the pet.
+3. **Scale the effect to the moment:** tap < tick off a task < finish a session < buy an item < level up.
+4. **Calm while focusing.** During a focus session the pet is quiet; the loud moments are the start, the end and rewards.
+5. **Accessible and light.** The OS reduce-motion setting and the in-app **Animations** switch (Settings) turn movement off; values still update. Animate only `transform` and `opacity`, and pause loops in background tabs.
+
+**Tokens** (`app/assets/css/main.css`, read by `useMotion()` in JavaScript)
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--duration-tap` | 80ms | Press feedback (the button sink) |
+| `--duration-quick` | 160ms | Hovers, switches, small state changes |
+| `--duration-move` | 320ms | Things moving or appearing; page transitions |
+| `--duration-celebrate` | 700ms | Rewards, level-ups, the pet's big reactions |
+| `--ease-pop` | small overshoot | Rewards, pops, stickers |
+| `--ease-soft` | fast start, gentle stop | Most movement |
+| `--ease-in-out-soft` | smooth both ways | Loops such as breathing |
+| `--ease-spring` | bouncy, two wobbles | Squash and stretch |
+
+**How to animate**
+
+- CSS loops and transitions use the tokens: `duration-(--duration-quick) ease-pop`, or `var(--ease-soft)` in keyframes.
+- One-shot animations from code use `useMotion().play(element, keyframes, { duration: 'move', easing: 'pop' })`. It does nothing when motion is reduced.
+- Prefix decorative CSS animations with `motion-safe:`. It follows both the OS setting and the in-app switch (`data-motion="reduced"` on `<html>`).
+- Specific moments:
+  - Button press: 80ms sink.
+  - Reward pop: 360ms with a small overshoot.
+  - XP bar fill: 400ms ease-out.
+  - After a session, coins fly to the coin chip and the pet does a happy animation (#72).
 
 ## Icons and illustrations
 

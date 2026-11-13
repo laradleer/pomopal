@@ -8,6 +8,17 @@ const user = useUserStore()
 const profile = useProfileStore()
 const { signOut } = await useAuthActions()
 const { saveTimerSettings } = useTimerSettings()
+const motion = useMotion()
+
+const animations = computed({
+  get: () => motion.isEnabled.value && !motion.prefersReduced.value,
+  set: (value: boolean) => motion.setEnabled(value),
+})
+const animationsHelp = computed(() =>
+  motion.prefersReduced.value
+    ? 'Your device asks for less motion, so animations stay off.'
+    : "Moving effects, rewards and your pet's animations.",
+)
 
 const { values, errors, formError, pending, submit } = useZodForm(timerSettingsSchema, {
   focusMin: profile.timerMinutes.focus,
@@ -83,22 +94,34 @@ async function onSignOut() {
         </form>
       </UiCard>
 
-      <UiCard class="space-y-4">
-        <h2 class="text-heading">Account</h2>
-        <dl class="space-y-1 text-body">
-          <div class="flex gap-2">
-            <dt class="text-ink-muted">Name</dt>
-            <dd>{{ user.me?.user.name }}</dd>
-          </div>
-          <div class="flex gap-2">
-            <dt class="text-ink-muted">Email</dt>
-            <dd class="break-all">{{ user.me?.user.email }}</dd>
-          </div>
-        </dl>
-        <UiButton variant="outline" icon="log-out" :loading="signingOut" @click="onSignOut">
-          Log out
-        </UiButton>
-      </UiCard>
+      <div class="space-y-6">
+        <UiCard class="space-y-4">
+          <h2 class="text-heading">App</h2>
+          <UiSwitch
+            v-model="animations"
+            label="Animations"
+            :description="animationsHelp"
+            :disabled="motion.prefersReduced.value"
+          />
+        </UiCard>
+
+        <UiCard class="space-y-4">
+          <h2 class="text-heading">Account</h2>
+          <dl class="space-y-1 text-body">
+            <div class="flex gap-2">
+              <dt class="text-ink-muted">Name</dt>
+              <dd>{{ user.me?.user.name }}</dd>
+            </div>
+            <div class="flex gap-2">
+              <dt class="text-ink-muted">Email</dt>
+              <dd class="break-all">{{ user.me?.user.email }}</dd>
+            </div>
+          </dl>
+          <UiButton variant="outline" icon="log-out" :loading="signingOut" @click="onSignOut">
+            Log out
+          </UiButton>
+        </UiCard>
+      </div>
     </div>
   </div>
 </template>
