@@ -4,7 +4,7 @@ defineSlots<{ stats?(): unknown }>()
 </script>
 
 <template>
-  <header class="sticky top-0 z-30 border-b border-border bg-canvas/90 backdrop-blur">
+  <header class="top-bar sticky top-0 z-30 border-b border-border bg-canvas/90 backdrop-blur">
     <div class="mx-auto flex h-16 w-full max-w-app items-center justify-between gap-3 px-4">
       <NuxtLink to="/home" class="flex items-center gap-2 text-heading text-ink">
         <span class="grid size-8 place-items-center rounded-md bg-tomato text-on-brand">

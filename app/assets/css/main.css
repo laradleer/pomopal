@@ -323,3 +323,67 @@
     animation-play-state: paused !important;
   }
 }
+
+/*
+ * Page transitions (View Transitions API, `app.viewTransition` in nuxt.config.ts).
+ * Only the page area moves: it fades and slides a little towards the tab you go to
+ * (data-nav-direction, set by plugins/navigation-direction.client.ts). The top bar and tab bar
+ * are their own groups, so they stay put, and the active tab pill glides to its new place.
+ */
+.page-view {
+  view-transition-name: page;
+}
+.top-bar {
+  view-transition-name: top-bar;
+}
+.tab-bar {
+  view-transition-name: tab-bar;
+}
+.tab-pill {
+  view-transition-name: tab-pill;
+}
+
+:root {
+  --nav-shift: 0px;
+}
+:root[data-nav-direction='forward'] {
+  --nav-shift: 24px;
+}
+:root[data-nav-direction='back'] {
+  --nav-shift: -24px;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-old(page) {
+  animation: page-out var(--duration-quick) var(--ease-soft) both;
+}
+::view-transition-new(page) {
+  animation: page-in 220ms var(--ease-soft) both;
+}
+::view-transition-group(tab-pill) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: var(--ease-soft);
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    translate: calc(var(--nav-shift) * -1) 0;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: var(--nav-shift) 0;
+  }
+}
+
+/* The in-app Animations switch also turns page transitions off. */
+:root[data-motion='reduced']::view-transition-group(*),
+:root[data-motion='reduced']::view-transition-old(*),
+:root[data-motion='reduced']::view-transition-new(*) {
+  animation: none !important;
+}

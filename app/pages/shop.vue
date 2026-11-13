@@ -6,7 +6,7 @@ useSeoMeta({ title: 'Shop' })
 const pet = usePetStore()
 const profile = useProfileStore()
 const { mood } = usePetMood()
-const { itemsInSlot, slot, selected, select, buy, isBuying, reply } = await useShop()
+const { itemsInSlot, pending, slot, selected, select, buy, isBuying, reply } = await useShop()
 
 const SLOT_TABS = [
   { value: 'head', label: 'Head' },
@@ -67,7 +67,13 @@ const canBuySelected = computed(() =>
 
       <section class="space-y-4">
         <UiTabs v-model="slot" :options="SLOT_TABS" label="Item type" />
-        <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <ul
+          v-if="pending && itemsInSlot.length === 0"
+          class="grid grid-cols-2 gap-3 sm:grid-cols-3"
+        >
+          <li v-for="index in 3" :key="index"><UiSkeleton class="aspect-[3/4]" /></li>
+        </ul>
+        <ul v-else class="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <li v-for="item in itemsInSlot" :key="item.id">
             <ShopItem
               :name="item.name"

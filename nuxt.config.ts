@@ -11,6 +11,9 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'en' },
     },
+    // Page transitions with the View Transitions API (main.css → Page transitions). Browsers
+    // without it, and users who asked for less motion, get instant navigation.
+    viewTransition: true,
   },
 
   css: ['~/assets/css/main.css'],
@@ -48,5 +51,10 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
+  },
+
+  // Loads Nuxt's View Transitions plugin; `app.viewTransition` above turns it on for every page.
+  experimental: {
+    viewTransition: true,
   },
 })
