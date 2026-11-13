@@ -152,6 +152,7 @@ const eyeOffset = computed(() =>
 // ---- Reactions (live mascot only) ----
 
 const animator = usePetAnimator()
+const sound = useSound()
 const whole = useTemplateRef<SVGGElement>('whole')
 const shadow = useTemplateRef<SVGEllipseElement>('shadow')
 const isCelebrating = ref(false)
@@ -298,6 +299,7 @@ function tap() {
     return
   }
   animator.send('giggle')
+  sound.play('giggle')
   addHeart()
   addHeart()
   animator.say(tapLine())

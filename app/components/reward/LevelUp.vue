@@ -6,6 +6,7 @@
  */
 const { levelUp, dismissLevelUp } = useRewardFeedback()
 const pet = usePetStore()
+const sound = useSound()
 
 const dialog = useTemplateRef<HTMLDialogElement>('dialog')
 
@@ -14,7 +15,10 @@ watch(
   (level) => {
     const element = dialog.value
     if (!element) return
-    if (level !== null && !element.open) element.showModal()
+    if (level !== null && !element.open) {
+      element.showModal()
+      sound.play('levelUp')
+    }
     if (level === null && element.open) element.close()
   },
   { flush: 'post' },

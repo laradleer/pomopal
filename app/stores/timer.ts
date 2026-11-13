@@ -25,6 +25,7 @@ export const useTimerStore = defineStore('timer', () => {
   const toast = useToast()
   const rewardFeedback = useRewardFeedback()
   const petAnimator = usePetAnimator()
+  const sound = useSound()
 
   const durations = computed(() => profile.timerMinutes)
   const state = ref<TimerState>(initialTimerState(durations.value))
@@ -130,6 +131,7 @@ export const useTimerStore = defineStore('timer', () => {
   function onTimeUp() {
     const finished = state.value.phase
     send({ type: 'timeUp' })
+    sound.play('chime')
     if (finished === 'focusing') {
       lastResult.value = 'completed'
       // The pet celebrates at once; the reward toast follows when the server has paid out.

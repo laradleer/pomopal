@@ -9,6 +9,11 @@ const profile = useProfileStore()
 const { signOut } = await useAuthActions()
 const { saveTimerSettings } = useTimerSettings()
 const motion = useMotion()
+const sound = useSound()
+const sounds = computed({
+  get: () => sound.isEnabled.value,
+  set: (value: boolean) => sound.setEnabled(value),
+})
 
 const animations = computed({
   get: () => motion.isEnabled.value && !motion.prefersReduced.value,
@@ -102,6 +107,11 @@ async function onSignOut() {
             label="Animations"
             :description="animationsHelp"
             :disabled="motion.prefersReduced.value"
+          />
+          <UiSwitch
+            v-model="sounds"
+            label="Sounds"
+            description="Soft sounds for rewards and the end of a session."
           />
         </UiCard>
 

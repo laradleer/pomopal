@@ -42,6 +42,7 @@ export function useRewardFeedback() {
   const motion = useMotion()
   const profile = useProfileStore()
   const petAnimator = usePetAnimator()
+  const sound = useSound()
 
   /** The new level while the celebration is open, else null. */
   const levelUp = useState<number | null>('reward:levelUp', () => null)
@@ -96,6 +97,7 @@ export function useRewardFeedback() {
     const isLast = index === flight.count - 1
     if (isLast) flights.value = flights.value.filter((item) => item.id !== flight.id)
     if (flight.kind !== 'earn') return
+    sound.play('coin')
     heldCoins.value = isLast
       ? null
       : flight.start + Math.round((flight.amount * (index + 1)) / flight.count)
