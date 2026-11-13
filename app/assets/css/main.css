@@ -13,6 +13,26 @@
 /* Dark variant follows data-theme, not the OS setting. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
+/*
+ * Reduced motion = the OS setting OR the in-app "Animations" switch (data-motion="reduced" on
+ * <html>, set by useMotion). Tailwind's motion-safe / motion-reduce variants follow both.
+ */
+@custom-variant motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    &:where(:not([data-motion='reduced'] *)) {
+      @slot;
+    }
+  }
+}
+@custom-variant motion-reduce {
+  @media (prefers-reduced-motion: reduce) {
+    @slot;
+  }
+  &:where([data-motion='reduced'] *) {
+    @slot;
+  }
+}
+
 /* `static`: always output every token as a CSS variable, even if no utility uses it yet,
    so var(--color-…) works in SVGs, keyframes and dynamic styles. */
 @theme static {
@@ -124,10 +144,21 @@
   --container-phone: 30rem; /* 480px */
   --container-app: 60rem; /* 960px */
 
-  /* Motion */
-  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /*
+   * Motion (docs/04-design-system.md → Motion). Durations scale with how important the moment
+   * is. JavaScript reads the same tokens through useMotion(), so they are defined only here.
+   */
+  --duration-tap: 80ms; /* press feedback */
+  --duration-quick: 160ms; /* hovers, small state changes */
+  --duration-move: 320ms; /* things moving or appearing */
+  --duration-celebrate: 700ms; /* rewards, level-ups, the pet's big reactions */
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1); /* small overshoot: rewards, pops */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1); /* fast start, gentle stop: most movement */
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1); /* loops such as breathing */
+  /* A bouncy spring with two small wobbles, for squash and stretch. */
+  --ease-spring: linear(0, 0.25 7%, 0.81 18%, 1.08 27%, 1.13 33%, 1.05 44%, 0.98 56%, 1.01 72%, 1);
   --animate-pop: pop 360ms var(--ease-pop);
-  --animate-sheet-in: sheet-in 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-sheet-in: sheet-in 240ms var(--ease-soft);
   --animate-hop: hop 700ms ease-out;
 
   @keyframes pop {
@@ -282,6 +313,7 @@
     outline-offset: 2px;
   }
 
+  /* Reduced motion (OS setting or the in-app switch): animations end at once, values still change. */
   @media (prefers-reduced-motion: reduce) {
     *,
     ::before,
@@ -291,5 +323,20 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+  [data-motion='reduced'] *,
+  [data-motion='reduced'] ::before,
+  [data-motion='reduced'] ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Loops rest while the tab is in the background (set by useMotion). */
+  [data-tab-hidden] *,
+  [data-tab-hidden] ::before,
+  [data-tab-hidden] ::after {
+    animation-play-state: paused !important;
   }
 }
