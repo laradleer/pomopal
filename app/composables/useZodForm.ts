@@ -9,6 +9,8 @@ import type { z } from 'zod'
  * - Field errors appear after the first submit, then update while typing.
  * - `submit(action)` runs `action` with the parsed data. If it throws, the error's message
  *   becomes `formError`, so actions should throw friendly messages (see app/utils/error-messages.ts).
+ * - `reset(values?)` starts over (e.g. after adding a task, or when a sheet opens): new values,
+ *   no errors, and no validation until the next submit.
  */
 /** Every field may start empty (e.g. no pet chosen yet); the schema decides what is required. */
 type FormValues<Schema extends z.ZodObject> = {
@@ -68,5 +70,12 @@ export function useZodForm<Schema extends z.ZodObject>(
     }
   }
 
-  return { values, errors, formError, pending, submit }
+  function reset(next: Values = initial) {
+    values.value = structuredClone(next)
+    errors.value = {}
+    formError.value = undefined
+    submitted.value = false
+  }
+
+  return { values, errors, formError, pending, submit, reset }
 }

@@ -201,7 +201,7 @@ export async function useShop() {
 - One composable per feature: `useShop`, `useTasks`, `useStats`, `useSessions`.
 - It returns refs and functions, never raw promises for the template to unwrap.
 - Errors: catch only where you can show something useful. `apiErrorMessage(error)` (`app/utils/error-messages.ts`) turns an API error into the friendly text; every error code needs a message there.
-- **Forms** use `useZodForm(schema, initialValues)` with the same zod schema as the API. Its `submit(action)` shows field errors, and any error the action throws becomes `formError` (show it with `<UiAlert>`).
+- **Forms** use `useZodForm(schema, initialValues)` with the same zod schema as the API. Its `submit(action)` shows field errors, and any error the action throws becomes `formError` (show it with `<UiAlert>`). `reset(values)` starts a form over, e.g. when an edit sheet opens or after adding a task.
 
 ### Stores: shared state only
 
@@ -246,7 +246,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - 🔒 Typed `defineProps<…>()` and `defineEmits<…>()`. Use `defineModel()` for `v-model`.
 - 🔒 Components are written in PascalCase in templates: `<UiButton>`, not `<ui-button>`.
 - Build screens from `Ui*` components first. If a `Ui*` component is missing something, extend it there instead of styling around it. All of them are shown on `/dev/ui`.
-- Segmented choices (timer modes, shop slots) use `<UiTabs>`. Item tiles in the shop and the wardrobe are `<ShopItem>`, with the item drawn by `<ShopItemArt>`.
+- Segmented choices (timer modes, shop slots) use `<UiTabs>`. Dropdowns use `<UiSelect>` inside `<UiFormField>`. Item tiles in the shop and the wardrobe are `<ShopItem>`, with the item drawn by `<ShopItemArt>`.
 - Confirmations use `<UiSheet>`, short messages use `useToast().show()`, icons use `<UiIcon name="…">` (Lucide names). Never `alert()`, `confirm()` or a raw `<svg>` icon.
 - Rewards from the server (XP, coins, level-ups) are shown with `useRewardFeedback().celebrate(rewards)`: the reward toast and the level-up screen. Refresh the user store first, so the chips and XP bar move at the same time.
 - Components get data through props and report changes through events. Only feature components may read a store.
