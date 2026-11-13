@@ -85,6 +85,23 @@
   --color-pet-line: #2b2825;
   --color-pet-blush: #ff9e8a;
 
+  /* Accessories from the shop (same in both themes, like the pet) */
+  --color-pet-red: #e5533d;
+  --color-pet-red-shade: #b83a28;
+  --color-pet-blue: #3f87e0;
+  --color-pet-blue-shade: #2a62a8;
+  --color-pet-purple: #7a52e8;
+  --color-pet-purple-shade: #5636b5;
+  --color-pet-gold: #ffc83d;
+  --color-pet-gold-shade: #d99a00;
+  --color-pet-green: #52b043;
+  --color-pet-wall: #f6e6cc;
+  --color-pet-wood: #b07a48;
+  --color-pet-wood-shade: #8a5a30;
+  --color-pet-night: #22295a;
+  --color-pet-night-shade: #161b3d;
+  --color-pet-star: #fff1b8;
+
   /* Fonts: Rubik for display, Nunito for body. Loaded by @nuxt/fonts. */
   --font-display: 'Rubik', system-ui, sans-serif;
   --font-body: 'Nunito', system-ui, sans-serif;

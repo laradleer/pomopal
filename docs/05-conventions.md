@@ -174,7 +174,7 @@ const { items, buy, pending } = await useShop()
 </script>
 
 <template>
-  <ShopGrid :items="items" :loading="pending" @buy="buy" />
+  <ShopItem v-for="item in items" :key="item.id" v-bind="…" @click="select(item)" />
 </template>
 ```
 
@@ -185,13 +185,13 @@ const { items, buy, pending } = await useShop()
 ```ts
 // app/composables/useShop.ts
 export async function useShop() {
-  const profile = useProfileStore()
-  const { data: items, pending, refresh } = await useFetch('/api/shop', { default: () => [] })
+  const user = useUserStore()
+  const { data: items, pending, refresh } = await useFetch('/api/shop', { key: 'shop', default: () => [] })
 
-  async function buy(itemId: number) {
-    const result = await $fetch(`/api/shop/${itemId}/buy`, { method: 'POST' })
-    profile.setCoins(result.coins)
-    await refresh()
+  async function buy(item: ShopItemDto) {
+    await $fetch(`/api/shop/${item.id}/buy`, { method: 'POST' })
+    // The server changed the coins: refresh the single source of truth and the list together.
+    await Promise.all([user.refresh(), refresh()])
   }
 
   return { items, pending, buy }
@@ -212,16 +212,14 @@ Use Pinia **only** for state that several pages need and that must survive navig
 ```ts
 // app/stores/profile.ts
 export const useProfileStore = defineStore('profile', () => {
-  const coins = ref(0)
-  const level = ref(1)
+  const user = useUserStore()
+
+  const coins = computed(() => user.me?.profile.coins ?? 0)
+  const progress = computed(() => levelProgress(user.me?.profile.xp ?? 0))
 
   const canAfford = (price: number) => coins.value >= price
 
-  function setCoins(value: number) {
-    coins.value = value
-  }
-
-  return { coins, level, canAfford, setCoins }
+  return { coins, progress, canAfford }
 })
 ```
 
@@ -248,6 +246,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - 🔒 Typed `defineProps<…>()` and `defineEmits<…>()`. Use `defineModel()` for `v-model`.
 - 🔒 Components are written in PascalCase in templates: `<UiButton>`, not `<ui-button>`.
 - Build screens from `Ui*` components first. If a `Ui*` component is missing something, extend it there instead of styling around it. All of them are shown on `/dev/ui`.
+- Segmented choices (timer modes, shop slots) use `<UiTabs>`. Item tiles in the shop and the wardrobe are `<ShopItem>`, with the item drawn by `<ShopItemArt>`.
 - Confirmations use `<UiSheet>`, short messages use `useToast().show()`, icons use `<UiIcon name="…">` (Lucide names). Never `alert()`, `confirm()` or a raw `<svg>` icon.
 - Rewards from the server (XP, coins, level-ups) are shown with `useRewardFeedback().celebrate(rewards)`: the reward toast and the level-up screen. Refresh the user store first, so the chips and XP bar move at the same time.
 - Components get data through props and report changes through events. Only feature components may read a store.
@@ -262,7 +261,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - `<style scoped>` only for what Tailwind can't express: keyframes, SVG details, complex animations. Colours inside it use `var(--token)`.
 - Mobile-first: the base classes are for the phone, `md:` and up for desktop.
 - Anything that should feel pressable gets `pressable edge-<token>` (for example `pressable edge-tomato-edge`): the 4px edge that sinks on press. `UiButton` already does this.
-- Illustrations (the pet, accessories) use the `pet-*` tokens, which stay the same in dark mode. Accessories go in `<PetView>`'s named slots (`background`, `neck`, `head`, `face`), drawn around (0, 0), so one drawing fits both the cat and the dog. Check new art on `/dev/ui`.
+- Illustrations (the pet, accessories) use the `pet-*` tokens, which stay the same in dark mode. Each shop item's drawing lives in `<PetAccessory>` under its `assetKey`, drawn around (0, 0) of its slot's anchor (backgrounds fill 0–200), so one drawing fits both the cat and the dog. `<PetView :equipped>` puts them on the pet. Check new art on `/dev/ui`.
 - The pet's mood and line come from `usePetMood()` (`app/utils/pet-lines.ts` holds the lines); don't pick a mood in a page.
 - Class order is sorted by Prettier automatically. Don't fight it.
 - Motion respects `prefers-reduced-motion` (`motion-safe:` / `motion-reduce:`).

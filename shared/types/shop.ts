@@ -23,3 +23,6 @@ export type BuyResult = {
   /** The new inventory row, so the item can be worn right away. */
   inventoryItemId: number
 }
+
+/** What the pet wears: the `assetKey` of the item in each slot. Empty slots are left out. */
+export type EquippedItems = Partial<Record<ItemSlot, string>>

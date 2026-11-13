@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PET_MOODS, PET_SPECIES } from '#shared/constants'
+import type { ItemSlot } from '#shared/constants'
 
 // Every Ui* component in every state, for /dev/ui. Dev only.
 const toast = useToast()
@@ -28,6 +29,34 @@ function chooseInSheet(choice: string) {
   lastSheetChoice.value = choice
   isSheetOpen.value = false
 }
+
+// Every shop item (server/db/shop-items.ts), to check the art on both pets.
+const accessories: { assetKey: string; slot: ItemSlot }[] = [
+  { assetKey: 'party-hat', slot: 'head' },
+  { assetKey: 'beanie', slot: 'head' },
+  { assetKey: 'wizard-hat', slot: 'head' },
+  { assetKey: 'round-glasses', slot: 'face' },
+  { assetKey: 'sunglasses', slot: 'face' },
+  { assetKey: 'bandana', slot: 'neck' },
+  { assetKey: 'bow-tie', slot: 'neck' },
+  { assetKey: 'gold-medal', slot: 'neck' },
+  { assetKey: 'library', slot: 'background' },
+  { assetKey: 'night-sky', slot: 'background' },
+]
+const outfits = [
+  { head: 'party-hat', face: 'round-glasses', neck: 'bow-tie', background: 'library' },
+  { head: 'wizard-hat', face: 'sunglasses', neck: 'gold-medal', background: 'night-sky' },
+  { head: 'beanie', neck: 'bandana' },
+]
+
+const tabsValue = ref<ItemSlot>('head')
+const tabOptions = [
+  { value: 'head', label: 'Head' },
+  { value: 'face', label: 'Face' },
+  { value: 'neck', label: 'Neck' },
+  { value: 'background', label: 'Background' },
+] as const satisfies readonly { value: ItemSlot; label: string }[]
+const selectedTile = ref('party-hat')
 
 const icons = [
   'flame',
@@ -60,6 +89,100 @@ const icons = [
         </template>
       </div>
       <PetGreeting species="cat" mood="happy" message="That was great! Ready for another round?" />
+    </div>
+
+    <div class="space-y-3">
+      <h3 class="text-label text-ink-muted">PetAccessory · every shop item on both pets</h3>
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <template v-for="item in accessories" :key="item.assetKey">
+          <figure
+            v-for="species in PET_SPECIES"
+            :key="`${item.assetKey}-${species}`"
+            class="flex flex-col items-center gap-2 rounded-lg bg-canvas-warm p-4"
+          >
+            <PetView
+              :species="species"
+              mood="happy"
+              :equipped="{ [item.slot]: item.assetKey }"
+              :size="120"
+            />
+            <figcaption class="text-body-sm text-ink-muted">{{ item.assetKey }}</figcaption>
+          </figure>
+        </template>
+        <template v-for="(outfit, index) in outfits" :key="index">
+          <figure
+            v-for="species in PET_SPECIES"
+            :key="`${index}-${species}`"
+            class="flex flex-col items-center gap-2 rounded-lg bg-canvas-warm p-4"
+          >
+            <PetView :species="species" mood="neutral" :equipped="outfit" :size="120" />
+            <figcaption class="text-body-sm text-ink-muted">outfit {{ index + 1 }}</figcaption>
+          </figure>
+        </template>
+      </div>
+    </div>
+
+    <div class="space-y-3">
+      <h3 class="text-label text-ink-muted">
+        UiTabs · ShopItem (for sale, too expensive, owned, wearing, locked)
+      </h3>
+      <UiTabs v-model="tabsValue" :options="tabOptions" label="Item type" class="max-w-phone" />
+      <ul class="grid max-w-app grid-cols-2 gap-3 sm:grid-cols-5">
+        <li>
+          <ShopItem
+            name="Party hat"
+            item-slot="head"
+            asset-key="party-hat"
+            state="forSale"
+            :price="30"
+            :selected="selectedTile === 'party-hat'"
+            @click="selectedTile = 'party-hat'"
+          />
+        </li>
+        <li>
+          <ShopItem
+            name="Night sky"
+            item-slot="background"
+            asset-key="night-sky"
+            state="forSale"
+            :price="180"
+            :affordable="false"
+            :selected="selectedTile === 'night-sky'"
+            @click="selectedTile = 'night-sky'"
+          />
+        </li>
+        <li>
+          <ShopItem
+            name="Round glasses"
+            item-slot="face"
+            asset-key="round-glasses"
+            state="owned"
+            :selected="selectedTile === 'round-glasses'"
+            @click="selectedTile = 'round-glasses'"
+          />
+        </li>
+        <li>
+          <ShopItem
+            name="Bow tie"
+            item-slot="neck"
+            asset-key="bow-tie"
+            state="equipped"
+            :selected="selectedTile === 'bow-tie'"
+            @click="selectedTile = 'bow-tie'"
+          />
+        </li>
+        <li>
+          <ShopItem
+            name="Wizard hat"
+            item-slot="head"
+            asset-key="wizard-hat"
+            state="locked"
+            :required-level="5"
+            :selected="selectedTile === 'wizard-hat'"
+            @click="selectedTile = 'wizard-hat'"
+          />
+        </li>
+      </ul>
     </div>
 
     <div class="space-y-3">
