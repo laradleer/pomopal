@@ -160,6 +160,7 @@
   --ease-spring: linear(0, 0.25 7%, 0.81 18%, 1.08 27%, 1.13 33%, 1.05 44%, 0.98 56%, 1.01 72%, 1);
   --animate-pop: pop 360ms var(--ease-pop);
   --animate-sheet-in: sheet-in 240ms var(--ease-soft);
+  --animate-flicker: flicker 1.8s var(--ease-in-out-soft) infinite;
 
   @keyframes pop {
     0% {
@@ -169,6 +170,23 @@
     100% {
       transform: scale(1);
       opacity: 1;
+    }
+  }
+
+  /* The streak flame: a gentle flicker */
+  @keyframes flicker {
+    0%,
+    100% {
+      scale: 1;
+      rotate: 0deg;
+    }
+    30% {
+      scale: 1.08 1.12;
+      rotate: -4deg;
+    }
+    60% {
+      scale: 0.96 1.04;
+      rotate: 3deg;
     }
   }
 

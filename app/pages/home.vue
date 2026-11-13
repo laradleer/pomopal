@@ -20,7 +20,9 @@ const { openTasks, setDone } = await useTasks()
     </div>
     <aside class="space-y-6 md:pt-14" aria-label="Your progress">
       <RewardLevelCard />
+      <RewardDailyGoal />
       <TaskTodayCard :tasks="openTasks" @toggle="setDone" />
+      <ShopNextUnlock />
     </aside>
   </div>
 </template>

@@ -181,8 +181,8 @@ export const useTimerStore = defineStore('timer', () => {
         // Refresh first, so the chips and XP bar move together with the reward toast.
         await user.refresh()
         rewardFeedback.celebrate(result.rewards)
-        // The task's session count went up.
-        if (sessionTaskId !== null) await refreshNuxtData('tasks')
+        // Today's goal and the task's session count went up.
+        await refreshNuxtData(sessionTaskId !== null ? ['today', 'tasks'] : 'today')
       } else {
         await $fetch<FocusSessionDto>(`/api/sessions/${id}/abandon`, { method: 'POST' })
         // The pet's mood changed on the server.

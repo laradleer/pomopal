@@ -41,6 +41,11 @@ export const useProfileStore = defineStore('profile', () => {
     long: profile.value?.longBreakMin ?? TIMER_LIMITS.longBreak.default,
   }))
 
+  /** Whether the streak already counts today (unknown until syncToday has run). */
+  const hasStudiedToday = computed(
+    () => today.value !== null && profile.value?.lastStudyDate === today.value,
+  )
+
   function syncToday() {
     today.value = localDate(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone)
   }
@@ -53,6 +58,7 @@ export const useProfileStore = defineStore('profile', () => {
     progress,
     level,
     streakDays,
+    hasStudiedToday,
     timerMinutes,
     syncToday,
   }

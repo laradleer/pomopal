@@ -34,3 +34,6 @@ export const MODE_LIMITS = {
   short: TIMER_LIMITS.shortBreak,
   long: TIMER_LIMITS.longBreak,
 } as const satisfies Record<SessionMode, { min: number; max: number; default: number }>
+
+/** Focus sessions a day that make the daily goal: one full Pomodoro cycle. */
+export const DAILY_GOAL_SESSIONS = 4
