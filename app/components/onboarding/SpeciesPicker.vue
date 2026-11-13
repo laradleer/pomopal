@@ -4,7 +4,8 @@ import type { PetSpecies } from '#shared/constants'
 
 /**
  * Cat or dog, as two big pressable tiles. Real radio inputs underneath, so arrow keys,
- * Space and screen readers work as expected.
+ * Space and screen readers work as expected. A pet wags when its tile is hovered or focused,
+ * and jumps when it is chosen.
  */
 const model = defineModel<PetSpecies | undefined>()
 
@@ -16,6 +17,14 @@ const options: Record<PetSpecies, { label: string; blurb: string }> = {
 }
 
 const errorId = useId()
+
+const hovered = ref<PetSpecies | null>(null)
+const focused = ref<PetSpecies | null>(null)
+const cheers = reactive<Record<PetSpecies, number>>({ cat: 0, dog: 0 })
+
+watch(model, (species) => {
+  if (species) cheers[species]++
+})
 </script>
 
 <template>
@@ -27,12 +36,24 @@ const errorId = useId()
         :key="species"
         class="mb-1 flex pressable cursor-pointer flex-col items-center gap-2 rounded-lg border bg-surface p-5 text-center edge-border-strong has-checked:border-tomato has-checked:bg-tomato-tint has-checked:edge-tomato-edge has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus-ring"
         :class="props.error ? 'border-berry' : 'border-border-strong'"
+        @mouseenter="hovered = species"
+        @mouseleave="hovered = null"
       >
-        <input v-model="model" type="radio" name="species" :value="species" class="sr-only" />
+        <input
+          v-model="model"
+          type="radio"
+          name="species"
+          :value="species"
+          class="sr-only"
+          @focus="focused = species"
+          @blur="focused = null"
+        />
         <PetView
           :species="species"
           :mood="model === species ? 'happy' : 'neutral'"
           :size="88"
+          :excited="hovered === species || focused === species"
+          :cheer="cheers[species]"
           aria-hidden="true"
         />
         <span class="text-heading">{{ options[species].label }}</span>

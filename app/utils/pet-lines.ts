@@ -1,4 +1,4 @@
-import type { PetMood } from '#shared/constants'
+import type { PetMood, PetSpecies } from '#shared/constants'
 import type { TimerPhase } from '#shared/timer'
 import type { ShopItemDto } from '#shared/types/shop'
 
@@ -40,3 +40,26 @@ export function shopLine(item: ShopItemDto | null, coins: number): string {
 export function boughtLine(item: ShopItemDto): string {
   return `Yay, thank you! Put the ${item.name.toLowerCase()} on me from the Pet page.`
 }
+
+// ---- Playing with the pet (#76) ----
+
+const TAP_LINES = [
+  'Hehe, that tickles!',
+  'Hi there! Ready to study together?',
+  'Boop! You found my nose.',
+  'I like it when you visit me.',
+  'Wheee! Again, again!',
+]
+
+/** What the pet says when it is tapped: one of a few friendly lines. */
+export function tapLine(): string {
+  return TAP_LINES[Math.floor(Math.random() * TAP_LINES.length)] ?? 'Hehe, that tickles!'
+}
+
+export function strokeLine(species: PetSpecies): string {
+  return species === 'cat' ? 'Purrr… that feels so nice.' : 'Wag wag! That feels so nice.'
+}
+
+export const DIZZY_LINE = 'Whoa… the room is spinning!'
+export const WAKE_LINE = 'Yawn… oh, hi! I was just resting my eyes.'
+export const SLEEPING_LINE = 'Zzz… (tap me to wake me up)'
