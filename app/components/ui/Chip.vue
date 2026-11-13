@@ -11,8 +11,10 @@ const props = withDefaults(
     value: number | string
     label: string
     tone?: Tone
+    /** Extra classes for the icon, e.g. a bigger, flickering streak flame. */
+    iconClass?: string
   }>(),
-  { tone: 'neutral' },
+  { tone: 'neutral', iconClass: undefined },
 )
 
 const toneClasses: Record<Tone, string> = {
@@ -44,7 +46,7 @@ watch(
     class="inline-flex h-9 items-center gap-1.5 rounded-pill px-3 text-stat"
     :class="toneClasses[props.tone]"
   >
-    <UiIcon :name="props.icon" :size="20" :class="iconClasses[props.tone]" />
+    <UiIcon :name="props.icon" :size="20" :class="[iconClasses[props.tone], props.iconClass]" />
     <span :key="pops" class="inline-block" :class="pops > 0 && 'motion-safe:animate-pop'">
       {{ props.value }}
     </span>
