@@ -38,19 +38,8 @@ const canBuySelected = computed(() =>
 
     <div class="grid gap-6 md:grid-cols-2 md:items-start">
       <!-- Try-on stage -->
-      <section
-        aria-label="Preview"
-        class="flex flex-col items-center gap-4 rounded-xl bg-canvas-warm px-6 py-8 md:sticky md:top-24"
-      >
-        <PetView
-          :species="pet.species"
-          :mood="mood"
-          :name="pet.name"
-          :equipped="preview"
-          :size="180"
-          live
-        />
-        <PetBubble class="w-full">{{ line }}</PetBubble>
+      <div class="space-y-4 md:sticky md:top-24">
+        <PetStage :mood="mood" :message="line" :equipped="preview" />
         <UiButton
           v-if="selected && canBuySelected"
           block
@@ -63,7 +52,7 @@ const canBuySelected = computed(() =>
         <UiButton v-else-if="selected?.owned" block variant="outline" icon="paw-print" to="/pet">
           Go to the wardrobe
         </UiButton>
-      </section>
+      </div>
 
       <section class="space-y-4">
         <UiTabs v-model="slot" :options="SLOT_TABS" label="Item type" />

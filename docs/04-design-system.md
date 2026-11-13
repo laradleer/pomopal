@@ -131,10 +131,32 @@ Every text colour passes a 4.5:1 contrast ratio in both themes.
 
 ## Layout
 
-- **Mobile-first.** 16px side margins. Max 480px wide on phones, 2-column bento up to 960px on desktop.
-- **Top bar:** logo on the left; streak, level and coin chips on the right.
-- **Home:** pet and greeting at the top, timer card, today's tasks.
-- **Bottom:** floating tab bar. Add bottom padding so content isn't hidden behind it.
+The pet's **room** is the hero of the app (epic #69). The same `<PetStage>` is used on home, `/pet` and `/shop`: the student's live mascot in the equipped background (or the default room), with its speech bubble on top.
+
+| Width | Navigation | Content |
+| --- | --- | --- |
+| Phones (< 768px) | Floating pill tab bar at the bottom | One 480px column: stage (square, at most about half the screen), timer, then progress cards. 16px side margins. |
+| Tablets (768–1023px) | Floating pill tab bar | Two columns up to 960px: stage + timer, progress on the right. |
+| Desktop (≥ 1024px) | Navigation rail on the left (`<AppNavRail>`), no tab bar | Up to 1216px next to the rail: stage + timer in the middle, progress column (level, today's tasks) on the right. |
+
+```
+Phone                                Desktop
+┌──────────────────────────┐         ┌──────┬──────────────────────────┬─────────────┐
+│ PomoPal     🔥 ⭐ 🪙   ⚙  │         │ logo │ PomoPal         🔥 ⭐ 🪙 ⚙│             │
+│ Hi, Mia!                 │         │ ⏱   │ Hi, Mia!                 │ Level 3 ▓▓░ │
+│ ┌──────────────────────┐ │         │ ✓   │ ┌──────────────────────┐ │ Today's     │
+│ │ "bubble"   room      │ │         │ 🐾  │ │ "bubble"   room      │ │ tasks       │
+│ │        🐱            │ │         │ 🏪  │ │        🐱            │ │             │
+│ └──────────────────────┘ │         │ 📊  │ └──────────────────────┘ │             │
+│ [Focus|Short|Long] 25:00 │         │      │ [Focus|Short|Long] 25:00 │             │
+│ Level · Today's tasks    │         │ rail │                          │             │
+│      ( tab bar pill )    │         └──────┴──────────────────────────┴─────────────┘
+└──────────────────────────┘
+```
+
+- **Top bar:** logo (in the rail on desktop); streak, level and coin chips and settings on the right.
+- **During a focus session** the timer card is the clearest thing on screen; the pet in the room reads quietly.
+- **Bottom:** add bottom padding on phones and tablets so content isn't hidden behind the tab bar.
 
 ## Motion
 
