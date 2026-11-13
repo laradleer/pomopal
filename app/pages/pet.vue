@@ -28,12 +28,12 @@ const SLOT_LABEL: Record<ItemSlot, string> = {
 // ---- Rename ----
 
 const isRenameOpen = ref(false)
-const { values, errors, formError, pending, submit } = useZodForm(petRenameSchema, {
+const { values, errors, formError, pending, submit, reset } = useZodForm(petRenameSchema, {
   name: pet.name,
 })
 
 function openRename() {
-  values.value.name = pet.name
+  reset({ name: pet.name })
   isRenameOpen.value = true
 }
 

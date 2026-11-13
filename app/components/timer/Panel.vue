@@ -2,8 +2,14 @@
 import type { SessionMode } from '#shared/constants'
 import { FOCUS_SESSIONS_PER_CYCLE } from '#shared/timer'
 import type { TimerPhase } from '#shared/timer'
+import type { TaskDto } from '#shared/types/task'
 
-/** The timer card on the home page: mode tabs, ring, cycle dots and controls. */
+/**
+ * The timer card on the home page: mode tabs, task picker, ring, cycle dots and controls.
+ * `tasks` are the open tasks a focus session can be for.
+ */
+const props = withDefaults(defineProps<{ tasks?: TaskDto[] }>(), { tasks: () => [] })
+
 const timer = useTimerStore()
 const pet = usePetStore()
 
@@ -13,6 +19,30 @@ const selectedMode = computed({
   get: () => timer.mode,
   set: (mode: SessionMode) => timer.selectMode(mode),
 })
+
+// The picker works with strings ('' = no task); the store keeps the id.
+const selectedTask = computed({
+  get: () => (timer.taskId === null ? '' : String(timer.taskId)),
+  set: (value: string) => timer.selectTask(value === '' ? null : Number(value)),
+})
+const taskOptions = computed(() => [
+  { value: '', label: 'No task' },
+  ...props.tasks.map((task) => ({ value: String(task.id), label: task.title })),
+])
+const currentTask = computed(() => props.tasks.find((task) => task.id === timer.taskId))
+const canPickTask = computed(
+  () => timer.phase === 'idle' && timer.mode === 'focus' && props.tasks.length > 0,
+)
+
+// A task that was ticked off or deleted can't be picked any more.
+watch(
+  () => props.tasks,
+  (tasks) => {
+    if (timer.taskId !== null && !tasks.some((task) => task.id === timer.taskId)) {
+      timer.selectTask(null)
+    }
+  },
+)
 
 const RING_COLOR: Record<SessionMode, 'tomato' | 'leaf' | 'sky'> = {
   focus: 'tomato',
@@ -47,6 +77,22 @@ function confirmQuit() {
 <template>
   <UiCard :tone="CARD_TONE[timer.phase]" class="flex flex-col items-center gap-6">
     <TimerModeTabs v-model="selectedMode" :disabled="timer.isActive" />
+
+    <UiFormField
+      v-if="canPickTask"
+      v-slot="field"
+      label="What are you studying?"
+      class="w-full max-w-sm"
+    >
+      <UiSelect v-model="selectedTask" v-bind="field" :options="taskOptions" />
+    </UiFormField>
+    <p
+      v-else-if="timer.isActive && timer.mode === 'focus' && currentTask"
+      class="flex max-w-sm items-center gap-1.5 text-body text-ink-muted"
+    >
+      <UiIcon name="list-checks" :size="20" class="shrink-0" />
+      <span class="truncate">{{ currentTask.title }}</span>
+    </p>
 
     <TimerRing :progress="timer.progress" :color="RING_COLOR[timer.mode]">
       <span class="text-timer" role="timer" :aria-label="`${timer.clock} left`">

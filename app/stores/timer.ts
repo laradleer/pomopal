@@ -32,9 +32,13 @@ export const useTimerStore = defineStore('timer', () => {
   const lastResult = ref<'completed' | 'abandoned' | null>(null)
   /** Rewards from the last completed session. */
   const lastRewards = ref<CompleteSessionResult['rewards'] | null>(null)
+  /** The task the next focus session is for (null: none). */
+  const taskId = ref<number | null>(null)
 
   /** Resolves to the server id of the running focus session (null if saving failed). */
   let savedSession: Promise<number | null> | null = null
+  /** The task of the running focus session, to refresh its session count afterwards. */
+  let sessionTaskId: number | null = null
   let ticker: ReturnType<typeof setInterval> | undefined
 
   const phase = computed(() => state.value.phase)
@@ -88,10 +92,17 @@ export const useTimerStore = defineStore('timer', () => {
     send({ type: 'selectMode', mode: next })
   }
 
+  function selectTask(id: number | null) {
+    taskId.value = id
+  }
+
   function start() {
     const startingMode = state.value.mode
     send({ type: 'start', now: Date.now() })
-    if (startingMode === 'focus') savedSession = saveStart()
+    if (startingMode === 'focus') {
+      sessionTaskId = taskId.value
+      savedSession = saveStart()
+    }
   }
 
   function pause() {
@@ -132,7 +143,11 @@ export const useTimerStore = defineStore('timer', () => {
     try {
       const session = await $fetch<FocusSessionDto>('/api/sessions', {
         method: 'POST',
-        body: { mode: 'focus', plannedMin: durations.value.focus },
+        body: {
+          mode: 'focus',
+          plannedMin: durations.value.focus,
+          taskId: sessionTaskId ?? undefined,
+        },
       })
       return session.id
     } catch (error) {
@@ -162,6 +177,8 @@ export const useTimerStore = defineStore('timer', () => {
         // Refresh first, so the chips and XP bar move together with the reward toast.
         await user.refresh()
         rewardFeedback.celebrate(result.rewards)
+        // The task's session count went up.
+        if (sessionTaskId !== null) await refreshNuxtData('tasks')
       } else {
         await $fetch<FocusSessionDto>(`/api/sessions/${id}/abandon`, { method: 'POST' })
         // The pet's mood changed on the server.
@@ -177,6 +194,7 @@ export const useTimerStore = defineStore('timer', () => {
     now,
     lastResult,
     lastRewards,
+    taskId,
     phase,
     mode,
     completedInCycle,
@@ -186,6 +204,7 @@ export const useTimerStore = defineStore('timer', () => {
     phaseLabel,
     isActive,
     selectMode,
+    selectTask,
     start,
     pause,
     resume,
