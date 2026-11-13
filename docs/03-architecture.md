@@ -96,10 +96,12 @@ pomopal/
 | `POST /api/sessions` | Start a session. Server saves `started_at`. |
 | `POST /api/sessions/:id/complete` | Check elapsed time. Give XP and coins. Update streak and level. |
 | `POST /api/sessions/:id/abandon` | Quit early. Pet becomes sad. No reward. |
-| `GET/POST/PATCH/DELETE /api/tasks` | Task create, read, update, delete. |
+| `GET /api/tasks`, `POST /api/tasks`, `PATCH/DELETE /api/tasks/:id` | Task create, read, update, delete. |
 | `GET /api/shop` | Items with owned, locked and affordable flags. |
 | `POST /api/shop/:itemId/buy` | Check level and coins, then buy in one transaction. |
+| `GET /api/inventory` | Owned items grouped by slot. |
 | `POST /api/inventory/:id/equip` | Equip an item. Unequips the other item in that slot. |
+| `POST /api/inventory/:id/unequip` | Take an item off. |
 | `GET /api/stats?range=week` | Focus minutes and sessions per day. |
 | `PATCH /api/settings` | Save timer lengths. |
 

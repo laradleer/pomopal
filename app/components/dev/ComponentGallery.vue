@@ -16,6 +16,14 @@ const passwordError = computed(() =>
   password.value.length > 0 && password.value.length < 8 ? 'At least 8 characters.' : undefined,
 )
 
+const subject = ref('')
+const subjects = [
+  { value: '', label: 'No task' },
+  { value: '1', label: 'Read chapter 3' },
+  { value: '2', label: 'Write the lab report' },
+]
+const focusMinutes = ref<number | undefined>(25)
+
 const isSheetOpen = ref(false)
 const lastSheetChoice = ref<string>()
 
@@ -277,6 +285,26 @@ const icons = [
           <UiInput v-model="password" v-bind="field" type="password" />
         </UiFormField>
       </form>
+    </div>
+
+    <div class="space-y-3">
+      <h3 class="text-label text-ink-muted">UiSelect · UiStepper</h3>
+      <div class="max-w-phone space-y-4">
+        <UiFormField v-slot="field" label="What are you studying?">
+          <UiSelect v-model="subject" v-bind="field" :options="subjects" />
+        </UiFormField>
+        <UiFormField v-slot="field" label="Focus" help="15 to 60 minutes">
+          <UiStepper
+            v-model="focusMinutes"
+            v-bind="field"
+            :min="15"
+            :max="60"
+            :step="5"
+            name="focus length"
+            unit="min"
+          />
+        </UiFormField>
+      </div>
     </div>
 
     <div class="space-y-3">
