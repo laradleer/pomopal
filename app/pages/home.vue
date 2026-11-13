@@ -17,6 +17,7 @@ const { openTasks, setDone } = await useTasks()
         :name="pet.name"
         :equipped="pet.equipped"
         :message="line"
+        live
       />
     </header>
 

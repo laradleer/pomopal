@@ -263,6 +263,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - Anything that should feel pressable gets `pressable edge-<token>` (for example `pressable edge-tomato-edge`): the 4px edge that sinks on press. `UiButton` already does this.
 - Illustrations (the pet, accessories) use the `pet-*` tokens, which stay the same in dark mode. Each shop item's drawing lives in `<PetAccessory>` under its `assetKey`, drawn around (0, 0) of its slot's anchor (backgrounds fill 0–200), so one drawing fits both the cat and the dog. `<PetView :equipped>` puts them on the pet. Check new art on `/dev/ui`.
 - The pet's mood and line come from `usePetMood()` (`app/utils/pet-lines.ts` holds the lines); don't pick a mood in a page.
+- The student's own pet is `<PetView live>` (or `<PetGreeting live>`): it follows the timer (reading while they focus) and plays reactions. Ask for a reaction with `usePetAnimator().send('celebrate')`; never animate the pet from a page. Other pets (onboarding, login) only idle.
 - Class order is sorted by Prettier automatically. Don't fight it.
 - Motion uses the motion tokens and `useMotion()` (docs/04-design-system.md → Motion). Decorative animations get `motion-safe:`, which follows both the OS setting and the in-app Animations switch.
 

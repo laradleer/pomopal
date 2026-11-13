@@ -24,6 +24,7 @@ export const useTimerStore = defineStore('timer', () => {
   const user = useUserStore()
   const toast = useToast()
   const rewardFeedback = useRewardFeedback()
+  const petAnimator = usePetAnimator()
 
   const durations = computed(() => profile.timerMinutes)
   const state = ref<TimerState>(initialTimerState(durations.value))
@@ -118,6 +119,7 @@ export const useTimerStore = defineStore('timer', () => {
     send({ type: 'quit' })
     if (!wasFocus) return
     lastResult.value = 'abandoned'
+    petAnimator.send('sad')
     void saveEnd('abandon')
   }
 
@@ -130,6 +132,8 @@ export const useTimerStore = defineStore('timer', () => {
     send({ type: 'timeUp' })
     if (finished === 'focusing') {
       lastResult.value = 'completed'
+      // The pet celebrates at once; the reward toast follows when the server has paid out.
+      petAnimator.send('celebrate')
       // The reward toast follows once the server has paid out (saveEnd).
       void saveEnd('complete')
     } else {
