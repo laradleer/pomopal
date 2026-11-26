@@ -1,10 +1,12 @@
 import { and, eq, sql } from 'drizzle-orm'
+import type { AchievementKey } from '#shared/constants'
 import type { SessionStartInput } from '#shared/schemas/session'
 import { localDate, nextStreak } from '#shared/streak'
 import type { CompleteSessionResult, FocusSessionDto } from '#shared/types/session'
 import type { Transaction } from '~~/server/db/client'
 import { focusSession, pet, profile, task } from '~~/server/db/schema'
 import type { FocusSession } from '~~/server/db/schema'
+import { unlockAchievements } from '~~/server/services/achievements'
 import { applyRewards } from '~~/server/services/rules/rewards'
 import { isSessionValid } from '~~/server/services/rules/session'
 
@@ -75,9 +77,9 @@ async function lockRunningSession(tx: Transaction, userId: string, id: number) {
 /**
  * Completes a running session if enough real time has passed (`isSessionValid`) and pays out:
  * XP, coins and level-ups go to the profile, the earnings are stored on the session, and a
- * completed focus session makes the pet happy, adds 1 to its task's `sessionsCount` and counts
- * for the streak (on the calendar day in `timeZone`). All in one transaction, with the session
- * and profile rows locked, so a session can never be paid twice.
+ * completed focus session makes the pet happy, adds 1 to its task's `sessionsCount`, counts
+ * for the streak (on the calendar day in `timeZone`) and may unlock badges. All in one
+ * transaction, with the session and profile rows locked, so a session can never be paid twice.
  */
 export async function completeSession(
   userId: string,
@@ -129,6 +131,7 @@ export async function completeSession(
       })
       .where(eq(profile.userId, userId))
 
+    let achievements: AchievementKey[] = []
     if (running.mode === 'focus') {
       await tx.update(pet).set({ mood: 'happy' }).where(eq(pet.userId, userId))
       if (running.taskId !== null) {
@@ -137,6 +140,7 @@ export async function completeSession(
           .set({ sessionsCount: sql`${task.sessionsCount} + 1` })
           .where(and(eq(task.id, running.taskId), eq(task.userId, userId)))
       }
+      achievements = await unlockAchievements(tx, userId, now)
     }
 
     return {
@@ -146,6 +150,7 @@ export async function completeSession(
         coins: reward.earned.coins,
         levelUp: reward.levelsGained > 0,
         newLevel: reward.progress.level,
+        achievements,
       },
     }
   })

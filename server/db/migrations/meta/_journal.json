@@ -15,6 +15,13 @@
       "when": 1794508347045,
       "tag": "0001_better-auth",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795682185839,
+      "tag": "0002_achievements",
+      "breakpoints": true
     }
   ]
 }

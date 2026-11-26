@@ -10,6 +10,7 @@ const pet = usePetStore()
 const { mood, line } = usePetMood()
 const { sections, isEmpty, pending: isLoadingWardrobe, toggle } = await useInventory()
 const { renamePet } = usePet()
+const { badges, unlockedCount, pending: isLoadingBadges } = await useAchievements()
 
 const MOOD_LABEL: Record<PetMood, string> = {
   happy: 'Happy',
@@ -59,38 +60,64 @@ async function saveName(input: PetRenameInput) {
         </template>
       </PetStage>
 
-      <UiCard class="space-y-6">
-        <div class="space-y-1">
-          <h2 class="text-heading">Wardrobe</h2>
-          <p class="text-body-sm text-ink-muted">Tap an item to put it on or take it off.</p>
-        </div>
+      <div class="space-y-6">
+        <UiCard class="space-y-6">
+          <div class="space-y-1">
+            <h2 class="text-heading">Wardrobe</h2>
+            <p class="text-body-sm text-ink-muted">Tap an item to put it on or take it off.</p>
+          </div>
 
-        <div v-if="isLoadingWardrobe && isEmpty" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <UiSkeleton v-for="index in 3" :key="index" class="aspect-[3/4]" />
-        </div>
-        <div v-else-if="isEmpty" class="flex flex-col items-center gap-4 py-6 text-center">
-          <p class="max-w-xs text-body text-ink-muted">
-            Nothing here yet. Earn coins with focus sessions and spend them in the shop!
-          </p>
-          <UiButton variant="outline" icon="store" to="/shop">Visit the shop</UiButton>
-        </div>
+          <div v-if="isLoadingWardrobe && isEmpty" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <UiSkeleton v-for="index in 3" :key="index" class="aspect-[3/4]" />
+          </div>
+          <div v-else-if="isEmpty" class="flex flex-col items-center gap-4 py-6 text-center">
+            <p class="max-w-xs text-body text-ink-muted">
+              Nothing here yet. Earn coins with focus sessions and spend them in the shop!
+            </p>
+            <UiButton variant="outline" icon="store" to="/shop">Visit the shop</UiButton>
+          </div>
 
-        <section v-for="section in sections" :key="section.slot" class="space-y-3">
-          <h3 class="text-label text-ink-muted">{{ SLOT_LABEL[section.slot] }}</h3>
-          <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <li v-for="item in section.items" :key="item.id">
-              <ShopItem
-                :name="item.name"
-                :item-slot="item.slot"
-                :asset-key="item.assetKey"
-                :state="item.equipped ? 'equipped' : 'owned'"
-                :selected="item.equipped"
-                @click="toggle(item)"
+          <section v-for="section in sections" :key="section.slot" class="space-y-3">
+            <h3 class="text-label text-ink-muted">{{ SLOT_LABEL[section.slot] }}</h3>
+            <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <li v-for="item in section.items" :key="item.id">
+                <ShopItem
+                  :name="item.name"
+                  :item-slot="item.slot"
+                  :asset-key="item.assetKey"
+                  :state="item.equipped ? 'equipped' : 'owned'"
+                  :selected="item.equipped"
+                  @click="toggle(item)"
+                />
+              </li>
+            </ul>
+          </section>
+        </UiCard>
+
+        <UiCard class="space-y-5">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="text-heading">Badges</h2>
+            <span class="text-label text-ink-muted">{{ unlockedCount }} / {{ badges.length }}</span>
+          </div>
+          <div v-if="isLoadingBadges && badges.length === 0" class="space-y-4">
+            <UiSkeleton v-for="index in 4" :key="index" class="h-12" />
+          </div>
+          <ul v-else class="space-y-5">
+            <li v-for="badge in badges" :key="badge.key">
+              <AchievementBadge
+                :title="badge.title"
+                :description="badge.description"
+                :icon="badge.icon"
+                :current="badge.current"
+                :goal="badge.goal"
+                :progress-text="badge.progressText"
+                :is-unlocked="badge.isUnlocked"
+                :is-new="badge.isNew"
               />
             </li>
           </ul>
-        </section>
-      </UiCard>
+        </UiCard>
+      </div>
     </div>
 
     <UiSheet v-model:open="isRenameOpen" title="Rename your pet">
