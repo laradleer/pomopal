@@ -1,14 +1,23 @@
 import { and, asc, count, eq } from 'drizzle-orm'
 import { ACHIEVEMENT_KEYS } from '#shared/constants'
 import type { AchievementKey } from '#shared/constants'
+import { localDate, visibleStreak } from '#shared/streak'
 import type { AchievementDto } from '#shared/types/achievement'
 import type { DbOrTx } from '~~/server/db/client'
 import { achievement, focusSession, profile } from '~~/server/db/schema'
 import { achievementProgress, earnedAchievements } from '~~/server/services/rules/achievements'
 import type { AchievementStats } from '~~/server/services/rules/achievements'
 
-/** The numbers the badges are measured against, read from the user's profile and sessions. */
-async function getAchievementStats(db: DbOrTx, userId: string): Promise<AchievementStats> {
+/**
+ * The numbers the badges are measured against, read from the user's profile and sessions.
+ * With `today`, the streak is the one the app shows (0 once it is broken), like the streak chip.
+ * Without it, it is the stored streak, which is current right after a session completes.
+ */
+async function getAchievementStats(
+  db: DbOrTx,
+  userId: string,
+  today?: string,
+): Promise<AchievementStats> {
   const [[sessions], current] = await Promise.all([
     db
       .select({ total: count() })
@@ -22,12 +31,16 @@ async function getAchievementStats(db: DbOrTx, userId: string): Promise<Achievem
       ),
     db.query.profile.findFirst({
       where: eq(profile.userId, userId),
-      columns: { streakDays: true, level: true },
+      columns: { streakDays: true, lastStudyDate: true, level: true },
     }),
   ])
+  const streak = {
+    streakDays: current?.streakDays ?? 0,
+    lastStudyDate: current?.lastStudyDate ?? null,
+  }
   return {
     focusSessions: sessions?.total ?? 0,
-    streakDays: current?.streakDays ?? 0,
+    streakDays: today === undefined ? streak.streakDays : visibleStreak(streak, today),
     level: current?.level ?? 1,
   }
 }
@@ -54,11 +67,15 @@ export async function unlockAchievements(
   return earned.filter((key) => isNew.has(key))
 }
 
-/** Every badge, unlocked or not, with how far the user is towards it. */
-export async function listAchievements(userId: string): Promise<AchievementDto[]> {
+/** Every badge, unlocked or not, with how far the user is towards it on their own calendar day. */
+export async function listAchievements(
+  userId: string,
+  now: Date,
+  timeZone: string,
+): Promise<AchievementDto[]> {
   const db = useDb()
   const [stats, unlocked] = await Promise.all([
-    getAchievementStats(db, userId),
+    getAchievementStats(db, userId, localDate(now, timeZone)),
     db
       .select({ key: achievement.key, unlockedAt: achievement.unlockedAt })
       .from(achievement)

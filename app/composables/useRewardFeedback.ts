@@ -1,3 +1,4 @@
+import type { AchievementKey } from '#shared/constants'
 import type { SessionRewards } from '#shared/types/session'
 
 type Point = { x: number; y: number }
@@ -50,6 +51,8 @@ export function useRewardFeedback() {
   const flights = useState<CoinFlight[]>('reward:flights', () => [])
   /** While coins fly to the chip, the chip shows this instead of the real balance. */
   const heldCoins = useState<number | null>('reward:heldCoins', () => null)
+  /** Badges unlocked since the pet page was last open: they pop in there once. */
+  const newBadges = useState<AchievementKey[]>('reward:newBadges', () => [])
 
   function fly(kind: CoinFlight['kind'], from: Element | null, to: Element | null, amount: number) {
     if (import.meta.server || motion.isReduced.value || !from || !to || amount <= 0) return false
@@ -108,6 +111,7 @@ export function useRewardFeedback() {
     if (rewards.xp > 0 || rewards.coins > 0) {
       toast.show(`+${rewards.coins} coins · +${rewards.xp} XP`, { tone: 'reward' })
     }
+    newBadges.value = [...newBadges.value, ...rewards.achievements]
     for (const key of rewards.achievements) {
       const badge = ACHIEVEMENT_INFO[key]
       toast.show(`Badge unlocked: ${badge.title}!`, { tone: 'reward', icon: badge.icon })
@@ -126,14 +130,20 @@ export function useRewardFeedback() {
     levelUp.value = null
   }
 
+  function markBadgesSeen() {
+    newBadges.value = []
+  }
+
   return {
     levelUp: readonly(levelUp),
     flights: readonly(flights),
     heldCoins: readonly(heldCoins),
+    newBadges: readonly(newBadges),
     celebrate,
     earnCoins,
     spendCoins,
     coinLanded,
     dismissLevelUp,
+    markBadgesSeen,
   }
 }

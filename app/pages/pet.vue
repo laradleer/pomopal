@@ -112,6 +112,7 @@ async function saveName(input: PetRenameInput) {
                 :goal="badge.goal"
                 :progress-text="badge.progressText"
                 :is-unlocked="badge.isUnlocked"
+                :is-new="badge.isNew"
               />
             </li>
           </ul>

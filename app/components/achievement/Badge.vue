@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * One badge on the pet page: a sun sticker with a darker rim once unlocked, a grey one with a
- * progress bar while locked.
+ * progress bar while locked. A badge that was just unlocked (`isNew`) pops in.
  */
 const props = defineProps<{
   title: string
@@ -11,6 +11,7 @@ const props = defineProps<{
   goal: number
   progressText: string
   isUnlocked: boolean
+  isNew: boolean
 }>()
 </script>
 
@@ -18,11 +19,10 @@ const props = defineProps<{
   <div class="flex items-start gap-3">
     <span
       class="grid size-12 shrink-0 place-items-center rounded-pill"
-      :class="
-        props.isUnlocked
-          ? 'bg-sun text-on-sun edge-sun-edge motion-safe:animate-pop'
-          : 'bg-surface-sunken text-ink-muted'
-      "
+      :class="[
+        props.isUnlocked ? 'bg-sun text-on-sun edge-sun-edge' : 'bg-surface-sunken text-ink-muted',
+        props.isNew && 'motion-safe:animate-pop',
+      ]"
     >
       <UiIcon :name="props.isUnlocked ? props.icon : 'lock'" :size="24" />
     </span>
