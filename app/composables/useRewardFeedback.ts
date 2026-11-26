@@ -35,6 +35,7 @@ function centerOf(element: Element): Point {
  *   - coins fly from the pet to the coin chip, which counts up as each one lands
  *   - the reward toast ("+10 coins · +25 XP")
  *   - on a level-up, the pet celebrates and the full-screen <RewardLevelUp> opens after the coins
+ *   - a toast for each badge the session unlocked
  * With reduced motion the numbers just change and the level-up opens at once.
  */
 export function useRewardFeedback() {
@@ -106,6 +107,10 @@ export function useRewardFeedback() {
   function celebrate(rewards: SessionRewards) {
     if (rewards.xp > 0 || rewards.coins > 0) {
       toast.show(`+${rewards.coins} coins · +${rewards.xp} XP`, { tone: 'reward' })
+    }
+    for (const key of rewards.achievements) {
+      const badge = ACHIEVEMENT_INFO[key]
+      toast.show(`Badge unlocked: ${badge.title}!`, { tone: 'reward', icon: badge.icon })
     }
     const isFlying = earnCoins(rewards.coins)
     if (rewards.levelUp) {

@@ -1,4 +1,4 @@
-import type { SessionMode, SessionStatus } from '../constants'
+import type { AchievementKey, SessionMode, SessionStatus } from '../constants'
 
 /** A focus session or break as the API returns it. Dates are ISO strings. */
 export type FocusSessionDto = {
@@ -19,6 +19,8 @@ export type SessionRewards = {
   coins: number
   levelUp: boolean
   newLevel: number
+  /** Badges this session unlocked (usually none). */
+  achievements: AchievementKey[]
 }
 
 /** POST /api/sessions/:id/complete */

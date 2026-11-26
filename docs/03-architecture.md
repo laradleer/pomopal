@@ -102,6 +102,7 @@ pomopal/
 | `GET /api/inventory` | Owned items grouped by slot. |
 | `POST /api/inventory/:id/equip` | Equip an item. Unequips the other item in that slot. |
 | `POST /api/inventory/:id/unequip` | Take an item off. |
+| `GET /api/achievements` | Every badge, unlocked or not, with progress. Badges unlock when a focus session completes. |
 | `GET /api/stats?range=week` | Focus minutes and sessions per day. |
 | `PATCH /api/settings` | Save timer lengths. |
 

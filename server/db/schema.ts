@@ -16,6 +16,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import type { AnyPgColumn } from 'drizzle-orm/pg-core'
 import {
+  ACHIEVEMENT_KEYS,
   ITEM_SLOTS,
   PET_MOODS,
   PET_NAME_MAX_LENGTH,
@@ -38,6 +39,7 @@ export const petMood = pgEnum('pet_mood', PET_MOODS)
 export const sessionMode = pgEnum('session_mode', SESSION_MODES)
 export const sessionStatus = pgEnum('session_status', SESSION_STATUSES)
 export const itemSlot = pgEnum('item_slot', ITEM_SLOTS)
+export const achievementKey = pgEnum('achievement_key', ACHIEVEMENT_KEYS)
 
 // ---------- Shared column helpers ----------
 
@@ -183,6 +185,18 @@ export const inventoryItem = pgTable(
   (t) => [uniqueIndex('inventory_item_user_item_unique').on(t.userId, t.itemId)],
 )
 
+/** Badges a user has unlocked. Each badge is unlocked once and kept, even if a streak breaks. */
+export const achievement = pgTable(
+  'achievement',
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    userId: ownerId(),
+    key: achievementKey().notNull(),
+    unlockedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('achievement_user_key_unique').on(t.userId, t.key)],
+)
+
 // ---------- Relations (for db.query.…({ with })) ----------
 
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -191,6 +205,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   tasks: many(task),
   sessions: many(focusSession),
   inventory: many(inventoryItem),
+  achievements: many(achievement),
 }))
 
 export const profileRelations = relations(profile, ({ one }) => ({
@@ -220,6 +235,10 @@ export const inventoryItemRelations = relations(inventoryItem, ({ one }) => ({
   item: one(shopItem, { fields: [inventoryItem.itemId], references: [shopItem.id] }),
 }))
 
+export const achievementRelations = relations(achievement, ({ one }) => ({
+  user: one(user, { fields: [achievement.userId], references: [user.id] }),
+}))
+
 // ---------- Row types ----------
 
 export type User = typeof user.$inferSelect
@@ -230,3 +249,4 @@ export type FocusSession = typeof focusSession.$inferSelect
 export type ShopItem = typeof shopItem.$inferSelect
 export type NewShopItem = typeof shopItem.$inferInsert
 export type InventoryItem = typeof inventoryItem.$inferSelect
+export type Achievement = typeof achievement.$inferSelect
