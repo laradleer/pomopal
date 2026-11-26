@@ -65,6 +65,10 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
+    // Type-check the API tests (tests/api) and the Vitest configs with the Node code.
+    nodeTsConfig: {
+      include: ['../tests/**/*', '../vitest.*.ts'],
+    },
   },
 
   // Loads Nuxt's View Transitions plugin; `app.viewTransition` above turns it on for every page.
