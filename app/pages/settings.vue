@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TIMER_LIMITS } from '#shared/constants'
 import { timerSettingsSchema } from '#shared/schemas/settings'
+import type { Theme } from '~/composables/useTheme'
 
 useSeoMeta({ title: 'Settings' })
 
@@ -8,6 +9,13 @@ const user = useUserStore()
 const profile = useProfileStore()
 const { signOut } = await useAuthActions()
 const { saveTimerSettings } = useTimerSettings()
+const { theme } = useTheme()
+const themeOptions = [
+  { value: 'system', label: 'Device' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+] as const satisfies readonly { value: Theme; label: string }[]
+
 const motion = useMotion()
 const sound = useSound()
 const sounds = computed({
@@ -102,6 +110,13 @@ async function onSignOut() {
       <div class="space-y-6">
         <UiCard class="space-y-4">
           <h2 class="text-heading">App</h2>
+          <div class="space-y-2">
+            <div>
+              <p class="text-body text-ink">Theme</p>
+              <p class="text-body-sm text-ink-muted">Device follows your phone or computer.</p>
+            </div>
+            <UiTabs v-model="theme" :options="themeOptions" label="Theme" />
+          </div>
           <UiSwitch
             v-model="animations"
             label="Animations"

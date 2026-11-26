@@ -71,6 +71,8 @@ The one rule: **calm canvas, loud rewards.**
 | `pet-wall`, `pet-wood`, `pet-wood-shade` | `#f6e6cc`, `#b07a48`, `#8a5a30` | same | Library background |
 | `pet-night`, `pet-night-shade`, `pet-star` | `#22295a`, `#161b3d`, `#fff1b8` | same | Night sky background |
 
+**Dark mode** follows the device by default (`color-scheme: light dark`). Settings → App → **Theme** can pin it to Light or Dark; the choice is saved in a cookie and set as `data-theme` on `<html>` while the page is rendered on the server, so there is no flash of the wrong theme. The pet and its room look the same in both themes.
+
 Every text colour passes a 4.5:1 contrast ratio in both themes.
 
 ## Typography
