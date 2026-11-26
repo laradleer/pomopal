@@ -48,7 +48,7 @@ const buttonClass =
       <UiIcon name="minus" />
     </button>
     <div
-      class="flex h-12 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-sm border border-border bg-surface-sunken px-3 focus-within:border-focus-ring has-aria-invalid:border-berry"
+      class="flex h-12 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-sm border border-border bg-surface-sunken px-3 focus-within:border-focus-ring has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus-ring has-aria-invalid:border-berry"
     >
       <input
         v-model.number="model"

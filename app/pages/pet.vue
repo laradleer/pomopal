@@ -12,6 +12,13 @@ const { sections, isEmpty, pending: isLoadingWardrobe, toggle } = await useInven
 const { renamePet } = usePet()
 const { badges, unlockedCount, pending: isLoadingBadges } = await useAchievements()
 
+// With an empty wardrobe the pet asks for its first item instead of describing its mood.
+const stageLine = computed(() =>
+  isEmpty.value && !isLoadingWardrobe.value
+    ? 'My wardrobe is empty! Finish focus sessions for coins, then pick something for me in the shop.'
+    : line.value,
+)
+
 const MOOD_LABEL: Record<PetMood, string> = {
   happy: 'Happy',
   sleepy: 'Sleepy',
@@ -52,7 +59,7 @@ async function saveName(input: PetRenameInput) {
     </div>
 
     <div class="grid gap-6 md:grid-cols-2 md:items-start">
-      <PetStage :mood="mood" :message="line" class="md:sticky md:top-24">
+      <PetStage :mood="mood" :message="stageLine" class="md:sticky md:top-24">
         <template #badge>
           <span class="rounded-pill bg-surface px-3 py-1 text-label text-ink-muted shadow-float">
             {{ MOOD_LABEL[mood] }}
@@ -71,9 +78,7 @@ async function saveName(input: PetRenameInput) {
             <UiSkeleton v-for="index in 3" :key="index" class="aspect-[3/4]" />
           </div>
           <div v-else-if="isEmpty" class="flex flex-col items-center gap-4 py-6 text-center">
-            <p class="max-w-xs text-body text-ink-muted">
-              Nothing here yet. Earn coins with focus sessions and spend them in the shop!
-            </p>
+            <p class="max-w-xs text-body text-ink-muted">Nothing to wear yet.</p>
             <UiButton variant="outline" icon="store" to="/shop">Visit the shop</UiButton>
           </div>
 

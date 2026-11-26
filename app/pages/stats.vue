@@ -3,6 +3,7 @@
 useSeoMeta({ title: 'Stats' })
 
 const profile = useProfileStore()
+const pet = usePetStore()
 const { days, today, week, pending } = await useStats()
 
 const isLoading = computed(() => pending.value && days.value.length === 0)
@@ -74,11 +75,15 @@ const tiles = computed(() => [
       <UiSkeleton v-if="isLoading" class="h-56" />
       <div
         v-else-if="week.focusSessions === 0"
-        class="flex flex-col items-center gap-4 py-6 text-center"
+        class="flex flex-col items-start gap-4 rounded-xl bg-canvas-warm px-4 py-6 sm:px-6 sm:py-8"
       >
-        <p class="max-w-xs text-body text-ink-muted">
-          No focus sessions in the last 7 days. Start one and watch your first bar grow!
-        </p>
+        <PetGreeting
+          :species="pet.species"
+          mood="sleepy"
+          :name="pet.name"
+          :equipped="pet.equipped"
+          message="No sessions this week yet. Let's grow your first bar!"
+        />
         <UiButton variant="outline" icon="timer" to="/home">Start a session</UiButton>
       </div>
       <StatsWeekChart v-else :days="days" />

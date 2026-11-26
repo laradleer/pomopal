@@ -7,11 +7,21 @@
  * token utilities (bg-tomato, text-ink-muted …) or var(--color-…).
  *
  * Each colour is defined once with light-dark(light, dark). Which value applies depends
- * on `color-scheme`, which is set by the data-theme attribute on <html> (see bottom).
+ * on `color-scheme`: the OS setting, unless the Theme choice in settings put data-theme on
+ * <html> (see bottom and useTheme).
  */
 
-/* Dark variant follows data-theme, not the OS setting. */
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+/* Dark variant: data-theme="dark", or a dark OS when no theme was chosen. */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
 
 /*
  * Reduced motion = the OS setting OR the in-app "Animations" switch (data-motion="reduced" on
@@ -286,8 +296,11 @@
 }
 
 @layer base {
-  /* Light by default. Dark only with data-theme="dark"; following the OS comes with #27. */
+  /* Follows the OS, unless a theme was chosen in settings (data-theme, set by useTheme). */
   :root {
+    color-scheme: light dark;
+  }
+  [data-theme='light'] {
     color-scheme: light;
   }
   [data-theme='dark'] {
