@@ -37,20 +37,21 @@ Both ports are bound to `127.0.0.1`, so nothing is exposed to the internet. On t
 
 ## Scripts
 
-| Script                | What it does                                |
-| --------------------- | ------------------------------------------- |
-| `npm run dev`         | Start the dev server with hot reload        |
-| `npm run build`       | Production build into `.output/`            |
-| `npm run preview`     | Run the production build locally            |
-| `npm run lint`        | ESLint + Prettier check (CI runs this)      |
-| `npm run lint:fix`    | Fix lint errors and format every file       |
-| `npm run typecheck`   | Type-check the whole project with `vue-tsc` |
-| `npm test`            | Run the unit tests once (Vitest)            |
-| `npm run test:watch`  | Run the unit tests in watch mode            |
-| `npm run db:generate` | Create a migration from schema changes      |
-| `npm run db:migrate`  | Apply pending migrations                    |
-| `npm run db:seed`     | Sync the shop items                         |
-| `npm run db:studio`   | Browse the database in Drizzle Studio       |
+| Script                | What it does                                                         |
+| --------------------- | -------------------------------------------------------------------- |
+| `npm run dev`         | Start the dev server with hot reload                                 |
+| `npm run build`       | Production build into `.output/`                                     |
+| `npm run preview`     | Run the production build locally                                     |
+| `npm run lint`        | ESLint + Prettier check (CI runs this)                               |
+| `npm run lint:fix`    | Fix lint errors and format every file                                |
+| `npm run typecheck`   | Type-check the whole project with `vue-tsc`                          |
+| `npm test`            | Run the unit tests once (Vitest)                                     |
+| `npm run test:watch`  | Run the unit tests in watch mode                                     |
+| `npm run test:api`    | Run the API tests against the build ([test plan](docs/test-plan.md)) |
+| `npm run db:generate` | Create a migration from schema changes                               |
+| `npm run db:migrate`  | Apply pending migrations                                             |
+| `npm run db:seed`     | Sync the shop items                                                  |
+| `npm run db:studio`   | Browse the database in Drizzle Studio                                |
 
 All four checks (`lint`, `typecheck`, `test`, `build`) must pass before a pull request is merged.
 
@@ -69,13 +70,14 @@ Never edit a migration that is already on `main`; add a new one instead. Shop it
 
 ## CI and deploy
 
-**CI** (`.github/workflows/ci.yml`) runs on every pull request and every push to `main`, with three jobs in parallel:
+**CI** (`.github/workflows/ci.yml`) runs on every pull request and every push to `main`, with four jobs in parallel:
 
-| Job                          | Checks                                                                       |
-| ---------------------------- | ---------------------------------------------------------------------------- |
-| Lint, typecheck, test, build | the four `npm` checks                                                        |
-| Migrations                   | schema and migrations are in sync; migrate and seed run twice on Postgres 18 |
-| Docker image                 | the production image builds                                                  |
+| Job                          | Checks                                                                        |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| Lint, typecheck, test, build | the four `npm` checks                                                         |
+| Migrations                   | schema and migrations are in sync; migrate and seed run twice on Postgres 18  |
+| API tests                    | the production build answers real requests (buying, equipping) on Postgres 18 |
+| Docker image                 | the production image builds                                                   |
 
 **Deploy** (`.github/workflows/deploy.yml`) runs after CI passes on `main`, for that exact commit. It connects to the VPS over SSH, checks out the commit and runs `docker compose up -d --build --wait`, which returns only when the app is healthy and migrations have run. You can also start it by hand under **Actions → Deploy → Run workflow**.
 
@@ -148,3 +150,4 @@ docs/               plan, backlog, architecture, design system
 - [Architecture](docs/03-architecture.md)
 - [Design system](docs/04-design-system.md)
 - [Coding conventions](docs/05-conventions.md)
+- [Test plan](docs/test-plan.md)

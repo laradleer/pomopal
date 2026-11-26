@@ -295,6 +295,8 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 - `npm test` runs every `*.test.ts` in `server/` and `shared/` with Vitest, in plain Node (no Nuxt boot).
 - Every function in `server/services/rules/` has tests. Any other pure helper in `shared/` should too.
 - A bug fix comes with a test that fails without the fix, whenever the code is testable.
+- `npm run test:api` runs the API tests in `tests/api/`: real HTTP requests to the production build (`npm run build` first) with a real Postgres. Use them for rules the database enforces, such as buying and equipping.
+- Manual test cases and their results live in [`docs/test-plan.md`](test-plan.md).
 
 ## Git and pull requests
 
