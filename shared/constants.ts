@@ -41,3 +41,7 @@ export const DAILY_GOAL_SESSIONS = 4
 /** Badges for milestones (#32), in the order they are shown. The goals live in rules/achievements.ts. */
 export const ACHIEVEMENT_KEYS = ['first-tomato', 'streak-5', 'sessions-10', 'level-5'] as const
 export type AchievementKey = (typeof ACHIEVEMENT_KEYS)[number]
+
+/** Ranges of the stats page (#26). Only the last 7 days for now. */
+export const STATS_RANGES = ['week'] as const
+export type StatsRange = (typeof STATS_RANGES)[number]
