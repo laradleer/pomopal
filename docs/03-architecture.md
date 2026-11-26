@@ -103,7 +103,7 @@ pomopal/
 | `POST /api/inventory/:id/equip` | Equip an item. Unequips the other item in that slot. |
 | `POST /api/inventory/:id/unequip` | Take an item off. |
 | `GET /api/achievements` | Every badge, unlocked or not, with progress. Badges unlock when a focus session completes. |
-| `GET /api/stats?range=week` | Focus minutes and sessions per day. |
+| `GET /api/stats?range=week&timeZone=…` | Focus minutes and sessions for each of the last 7 days in the student's time zone (0 for days without study). |
 | `PATCH /api/settings` | Save timer lengths. |
 
 ## Game rules (first version)
