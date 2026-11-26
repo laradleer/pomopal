@@ -10,6 +10,20 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
+      // Installable app (#33): public/manifest.webmanifest opens /home full-screen, without the
+      // browser bar. The colours are the canvas and tomato tokens (main.css), as hex for the browser.
+      link: [
+        { rel: 'manifest', href: '/manifest.webmanifest' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      ],
+      meta: [
+        { name: 'theme-color', content: '#ffffff', media: '(prefers-color-scheme: light)' },
+        { name: 'theme-color', content: '#121110', media: '(prefers-color-scheme: dark)' },
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-title', content: 'PomoPal' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+      ],
     },
     // Page transitions with the View Transitions API (main.css → Page transitions). Browsers
     // without it, and users who asked for less motion, get instant navigation.
